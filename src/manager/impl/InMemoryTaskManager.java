@@ -6,15 +6,15 @@ import manager.interfaces.TaskManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private static int numberOfIdTask;
+    private int numberOfIdTask;
     private final HashMap<Integer,Task> tasks;
     public final HistoryManager inMemoryHistoryManager;
 
     public InMemoryTaskManager(HistoryManager inMemoryHistoryManager){
+        numberOfIdTask = 0;
         this.tasks = new HashMap<>();
         this.inMemoryHistoryManager = inMemoryHistoryManager;
     }
@@ -28,43 +28,36 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager.getHistory();
     }
 
-
-
     @Override
-    public void addHistoryId(Task task){
+    public void addHistoryId(Task task)  {
         inMemoryHistoryManager.addHistoryId(task);
     }
 
-
-
     @Override
-    public SingleTask createNewSingleTask(String name,String description){
+    public void createNewSingleTask(SingleTask singleTask){
         incrementId();
-        SingleTask singleTask = new SingleTask(name,description,numberOfIdTask);
+        singleTask.setIdTask(numberOfIdTask);
         saveNewTask(singleTask);
-        return singleTask;
     }
 
     @Override
-    public SubTask createNewSubTask(String name, String description, EpicTask epicTask){
+    public void creatNewEpicTask(EpicTask epicTask){
         incrementId();
-        SubTask subTask = new SubTask(name,description,epicTask,numberOfIdTask);
-        saveNewTask(subTask);
-        isEpicDone(epicTask);
-        return subTask ;
-    }
-
-    @Override
-    public EpicTask creatNewEpicTask(String name, String description){
-        incrementId();
-        EpicTask epicTask = new EpicTask(name,description,numberOfIdTask);
+        epicTask.setIdTask(numberOfIdTask);
         saveNewTask(epicTask);
-        return epicTask;
+    }
+
+    @Override
+    public void createNewSubTask(SubTask subTask){
+        incrementId();
+        subTask.setIdTask(numberOfIdTask);
+        saveNewTask(subTask);
+        isEpicDone(subTask.getEpicTask());
     }
 
     @Override
     public void saveNewTask(Task task){
-        tasks.put(task.getIdTask(),task);
+        tasks.put(numberOfIdTask,task);
     }
 
     @Override
@@ -74,62 +67,43 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicTask.subTaskList.isEmpty()){
             epicTask.setStatus(Status.NEW);
         } else {
-            for (Integer i : epicTask.subTaskList) {
-                if (tasks.get(i).getStatus() == Status.DONE) {
+            for (SubTask subTask : epicTask.subTaskList) {
+                if (subTask.getStatus() == Status.DONE) {
                     statusDone++;
-                } else if (tasks.get(i).getStatus() == Status.IN_PROGRESS) {
+                } else if (subTask.getStatus() == Status.IN_PROGRESS) {
                     statusInProgress++;
                 }
             }
             if (statusDone == 0 && statusInProgress == 0) {
-                epicTask = epicTask.setStatus(Status.NEW);
+                epicTask.setStatus(Status.NEW);
                 tasks.put(epicTask.getIdTask(), epicTask);
             } else if (statusDone == epicTask.subTaskList.size()) {
-                epicTask = epicTask.setStatus(Status.DONE);
+                epicTask.setStatus(Status.DONE);
                 tasks.put(epicTask.getIdTask(), epicTask);
             } else if (statusDone > 0 || statusInProgress > 0) {
-                epicTask = epicTask.setStatus(Status.IN_PROGRESS);
+                epicTask.setStatus(Status.IN_PROGRESS);
                 tasks.put(epicTask.getIdTask(), epicTask);
             }
         }
     }
 
     @Override
-    public SingleTask updateSingleTask(Task task,String name,String description, Status status){
-        task = ((SingleTask) task).update(name,description,status);
-        tasks.put(task.getIdTask(),task);
-        return (SingleTask) task;
+    public void updateSingleTask(SingleTask singleTask,String name,String description, Status status){
+        singleTask.update(name,description,status);
+        tasks.put(singleTask.getIdTask(), singleTask);
     }
 
     @Override
-    public SubTask updateSubTask(Task task, String name,String description, EpicTask epicTask, Status status){
-        if (((SubTask) task).getEpicTask().equals(epicTask) ){
-            task = ((SubTask) task).update(name,description,epicTask,status);
-            tasks.put(task.getIdTask(),task);
-            isEpicDone(((SubTask) task).getEpicTask());
-        } else {
-            Integer numberOfIndexTask = -1;
-            for (Integer i: ((SubTask) task).getEpicTask().subTaskList) {
-                if (i ==  task.getIdTask()){
-                    numberOfIndexTask = i;
-                }
-            }
-            ((SubTask) task).getEpicTask().subTaskList.remove(numberOfIndexTask);
-            isEpicDone(((SubTask) task).getEpicTask());
-            task = ((SubTask) task).update(name,description,epicTask,status);
-            epicTask.subTaskList.add(task.getIdTask());
-            isEpicDone(epicTask);
-            tasks.put(task.getIdTask(),task);
-        }
-        return (SubTask) task;
+    public void updateSubTask(SubTask subTask, String name,String description, EpicTask epicTask, Status status){
+            subTask.update(name,description,epicTask,status);
+            tasks.put(subTask.getIdTask(),subTask);
+            isEpicDone(subTask.getEpicTask());
     }
 
     @Override
-    public EpicTask updateEpicTask(Task task,String name,String description){
-        task = ((EpicTask) task).update(name,description);
-        tasks.put(task.getIdTask(),task);
-        isEpicDone((EpicTask)task);
-        return (EpicTask) task;
+    public void updateEpicTask(EpicTask epicTask, String name, String description){
+        epicTask.update(name,description);
+        tasks.put(epicTask.getIdTask(),epicTask);
     }
 
     @Override
@@ -143,7 +117,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Список пуст.");
         }
-        return returnTasks;
+        return new ArrayList<>(returnTasks);
     }
 
     @Override
@@ -153,13 +127,14 @@ public class InMemoryTaskManager implements TaskManager {
             for (Task task : tasks.values()) {
                 if (task.getType() == typeOfTask) {
                     returnTasksByType.add(task);
+
                     inMemoryHistoryManager.addHistoryId(task);
                 }
             }
         } else {
             System.out.println("Список пуст.");
         }
-        return returnTasksByType;
+        return new ArrayList<>(returnTasksByType);
     }
 
     @Override
@@ -175,15 +150,15 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Задача не найдена");
         } else if (tasks.get(id).getType() == TypeOfTask.EPIC_TASK){
             EpicTask task = (EpicTask) tasks.get(id);
-            for (Integer integer: task.subTaskList ) {
-                tasks.remove(integer);
+            for (SubTask subTask: task.subTaskList ) {
+                tasks.remove(subTask.getIdTask());
             }
             tasks.remove(id);
         } else if (tasks.get(id).getType() == TypeOfTask.SUB_TASK){
             SubTask task = (SubTask) tasks.get(id);
             EpicTask epicTask = task.getEpicTask();
             tasks.remove(id);
-            epicTask.subTaskList.remove(id);
+            epicTask.subTaskList.remove(task);
             isEpicDone(epicTask);
         } else {
             tasks.remove(id);

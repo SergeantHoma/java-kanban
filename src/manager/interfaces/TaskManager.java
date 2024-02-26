@@ -11,25 +11,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-     SingleTask createNewSingleTask(String name, String description);
+     void createNewSingleTask(SingleTask singleTask);
 
-     void addHistoryId(Task task);
+     void addHistoryId(Task task) throws CloneNotSupportedException;
 
      ArrayList<Task> getHistory();
 
-     SubTask createNewSubTask(String name, String description, EpicTask epicTask);
+     void createNewSubTask(SubTask subTask);
 
-     EpicTask creatNewEpicTask(String name, String description);
+     void creatNewEpicTask(EpicTask epicTask);
 
      void saveNewTask(Task task);
 
      void isEpicDone(EpicTask epicTask);
 
-     SingleTask updateSingleTask(Task task,String name,String description, Status status);
+     void updateSingleTask(SingleTask singleTask,String name,String description, Status status);
 
-     SubTask updateSubTask(Task task, String name,String description, EpicTask epicTask, Status status);
+     void updateSubTask(SubTask subTask, String name,String description, EpicTask epicTask, Status status);
 
-     EpicTask updateEpicTask(Task task,String name,String description);
+     void updateEpicTask(EpicTask epicTask,String name,String description);
 
      List<Task> getAllTask();
 

@@ -11,7 +11,8 @@ class EpicTaskTest {
 
     @BeforeEach
     void makeEpicTask(){
-        epicTask = taskManager.creatNewEpicTask("test","test");
+        epicTask = new EpicTask("test","test");
+        taskManager.creatNewEpicTask(epicTask);
 
     }
 
@@ -22,7 +23,7 @@ class EpicTaskTest {
 
     @Test
     void shouldChangeEpicTask(){
-        epicTask = taskManager.updateEpicTask(epicTask,"changedName","changedDescription");
+        taskManager.updateEpicTask(epicTask,"changedName","changedDescription");
 
         assertEquals("changedName",epicTask.getName());
         assertEquals("changedDescription",epicTask.getDescription());
@@ -30,19 +31,23 @@ class EpicTaskTest {
 
     @Test
     void shouldChangeStatusAlongWithTheChangeOfSubtasksStatus(){
-        SubTask subTaskForChanges_1 = taskManager.createNewSubTask("testForEpic_1",
+        SubTask subTaskForChanges_1 = new SubTask ("testForEpic_1",
                 "testForEpic_1",epicTask);
-        SubTask subTaskForChanges_2 = taskManager.createNewSubTask("testForEpic_2",
+
+        SubTask subTaskForChanges_2 = new SubTask ("testForEpic_2",
                 "testForEpic_2",epicTask);
 
-        subTaskForChanges_1 = taskManager.updateSubTask(subTaskForChanges_1,"ChangedTestForEpic_1",
+        taskManager.createNewSubTask(subTaskForChanges_1);
+        taskManager.createNewSubTask(subTaskForChanges_2);
+
+        taskManager.updateSubTask(subTaskForChanges_1,"ChangedTestForEpic_1",
                 "ChangedTestForEpic_1",epicTask,Status.DONE);
 
 
         assertEquals(Status.IN_PROGRESS,taskManager.findTaskById(subTaskForChanges_1.
                 getEpicTask().getIdTask()).getStatus());
 
-        subTaskForChanges_2 = taskManager.updateSubTask(subTaskForChanges_2,"ChangedTestForEpic_2",
+        taskManager.updateSubTask(subTaskForChanges_2,"ChangedTestForEpic_2",
                 "ChangedTestForEpic_2",epicTask,Status.DONE);
 
         assertEquals(Status.DONE,taskManager.findTaskById(subTaskForChanges_2.
@@ -51,10 +56,14 @@ class EpicTaskTest {
 
     @Test
     void shouldDeleteSubTaskWithDeleteEpicTask(){
-        SubTask subTaskForDelete_1 = taskManager.createNewSubTask("testForEpic_1",
+        SubTask subTaskForDelete_1 = new SubTask ("testForEpic_1",
                 "testForEpic_1",epicTask);
-        SubTask subTaskForDelete_2 = taskManager.createNewSubTask("testForEpic_2",
+        SubTask subTaskForDelete_2 = new SubTask("testForEpic_2",
                 "testForEpic_2",epicTask);
+
+        taskManager.createNewSubTask(subTaskForDelete_1);
+        taskManager.createNewSubTask(subTaskForDelete_2);
+
         taskManager.deleteTaskById(epicTask.getIdTask());
 
         taskManager.findTaskById(epicTask.getIdTask());

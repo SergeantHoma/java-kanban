@@ -5,26 +5,29 @@ import manager.abstractClass.Task;
 public class SubTask extends Task {
     private EpicTask epicTask;
 
-    protected SubTask(String name, String description, EpicTask epicTask,int idTask) {
-        super(name, description, idTask);
-        this.epicTask = epicTask;
-        epicTask.subTaskList.add(this.getIdTask());
+    public SubTask(String name, String description, EpicTask epicTask) {
+        super(name, description);
+        setEpicTask(epicTask);
+        epicTask.subTaskList.add(this);
     }
 
-    private SubTask(String name,String description, EpicTask epicTask, int id, Status status){
-        super(name,description,id);
-        this.epicTask = epicTask;
-        this.status = status;
+    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
+    public SubTask(SubTask subTask){
+        super(subTask.getName(), subTask.getDescription(),
+                subTask.getIdTask(),subTask.getStatus());
+        setEpicTask(subTask.getEpicTask());
     }
 
-    protected SubTask update(String name,String description,EpicTask epicTask, Status status){
-        return new SubTask(
-                    name,
-                    description,
-                    epicTask,
-                    this.getIdTask(),
-                    status
-        );
+    protected void update(String name,String description,EpicTask epicTask, Status status){
+        setName(name);
+        setDescription(description);
+        setEpicTask(epicTask);
+        setStatus(status);
+    }
+
+    @Override
+    protected void setIdTask(int idTask) {
+        super.setIdTask(idTask);
     }
 
     public EpicTask getEpicTask() {
@@ -34,6 +37,10 @@ public class SubTask extends Task {
     @Override
     public TypeOfTask getType() {
         return TypeOfTask.SUB_TASK;
+    }
+
+    public void setEpicTask(EpicTask epicTask) {
+        this.epicTask = epicTask;
     }
 
     @Override

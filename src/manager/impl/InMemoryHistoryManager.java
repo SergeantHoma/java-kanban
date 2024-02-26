@@ -4,28 +4,34 @@ import manager.abstractClass.Task;
 import manager.interfaces.HistoryManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final ArrayList<Task> arrayList;
+    private final List<Task> arrayList;
 
     public InMemoryHistoryManager() {
-        this.arrayList = new ArrayList<>();
+        arrayList = new ArrayList<>();
     }
 
     @Override
-    public void addHistoryId(Task task) {
+    public void addHistoryId(Task task){
         if (arrayList.size() == 10){
             arrayList.remove(0);
-            arrayList.add(task);
-        } else
-            arrayList.add(task);
+        }
+        if(task.getType() == TypeOfTask.SINGLE_TASK){
+            SingleTask singleTask = new SingleTask((SingleTask) task);
+            arrayList.add(singleTask);
+        } else if (task.getType() == TypeOfTask.SUB_TASK){
+            SubTask subTask = new SubTask ((SubTask) task);
+            arrayList.add(subTask);
+        } else {
+            EpicTask epicTask = new EpicTask ((EpicTask) task);
+            arrayList.add(epicTask);
+        }
     }
 
     @Override
     public ArrayList<Task> getHistory() {
-        return arrayList;
+        return new ArrayList<>(arrayList);
     }
 }

@@ -2,9 +2,7 @@ package manager.impl;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +13,12 @@ class SubTaskTest {
 
     @BeforeAll
     static void makeEpicAndSubTasks(){
-        epicTaskTest = taskManager.creatNewEpicTask("EpicTask", "EpicTaskDescription");
-        subTaskTest = taskManager.createNewSubTask("SubTask", "SubTaskForEpicTaskTest", epicTaskTest);
+        epicTaskTest = new EpicTask ("EpicTask", "EpicTaskDescription");
+        taskManager.creatNewEpicTask(epicTaskTest);
+        subTaskTest = new SubTask ("SubTask", "SubTaskForEpicTaskTest", epicTaskTest);
+        taskManager.createNewSubTask(subTaskTest);
+        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
+        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
     }
 
     @Test
@@ -26,7 +28,7 @@ class SubTaskTest {
 
     @Test
     void shouldChangeSubTask(){
-        subTaskTest = taskManager.updateSubTask(subTaskTest,"SubTaskChangedName",
+        taskManager.updateSubTask(subTaskTest,"SubTaskChangedName",
                 "SubTaskForEpicTaskTestChanged",epicTaskTest,Status.IN_PROGRESS);
         assertEquals("SubTaskChangedName",subTaskTest.getName());
         assertEquals("SubTaskForEpicTaskTestChanged",subTaskTest.getDescription());
@@ -35,10 +37,12 @@ class SubTaskTest {
 
     @Test
     void shouldMakeTwoSubTasksWithOneIdEquals() {
-        SubTask subTaskToCompare = new SubTask("SubTaskChangedName","SubTaskForEpicTaskTestChanged",
-                subTaskTest.getEpicTask(),subTaskTest.getIdTask());
-        subTaskToCompare = taskManager.updateSubTask(subTaskTest,"SubTaskChangedName",
-                "SubTaskForEpicTaskTestChanged",epicTaskTest,Status.IN_PROGRESS);
-        assertEquals(subTaskToCompare.toString(),subTaskTest.toString());
+        SubTask subTaskToCompare = new SubTask ("SubTask", "SubTaskForEpicTaskTest", epicTaskTest);
+        taskManager.createNewSubTask(subTaskToCompare);
+
+        SubTask subTask = new SubTask ("SubTask", "SubTaskForEpicTaskTest", epicTaskTest);
+        subTask.setIdTask(subTaskToCompare.getIdTask());
+
+        assertEquals(subTaskToCompare.toString(),subTask.toString());
     }
 }

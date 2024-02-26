@@ -4,42 +4,36 @@ import java.util.ArrayList;
 import manager.abstractClass.Task;
 
 public class EpicTask extends Task {
-    protected ArrayList<Integer> subTaskList;
+    protected ArrayList<SubTask> subTaskList;
 
-    protected EpicTask(String name, String description,int id) {
-        super(name, description,id);
+    public EpicTask(String name,String description){
+        super(name,description);
         this.subTaskList = new ArrayList<>();
     }
 
-    protected EpicTask (String name, String description, int id, ArrayList<Integer> subTaskList, Status status){
-        super(name,description,id);
-        this.subTaskList = subTaskList;
-        this.status = status;
+    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
+    public EpicTask(EpicTask epicTask){
+        super(epicTask.getName(), epicTask.getDescription(),
+                epicTask.getIdTask(),epicTask.getStatus());
+        subTaskList = epicTask.getSubTaskList();
     }
 
-    protected EpicTask setStatus(Status status){
-        return new EpicTask(
-                this.getName(),
-                this.getDescription(),
-                this.getIdTask(),
-                this.getSubTaskList(),
-                status
-        );
+    protected void update(String name,String description){
+        setName(name);
+        setDescription(description);
     }
 
-    protected EpicTask update(String name,String description){
-        return new EpicTask(
-                name,
-                description,
-                this.getIdTask(),
-                this.getSubTaskList(),
-                this.getStatus()
-        );
+    @Override
+    protected void setIdTask(int idTask) {
+        super.setIdTask(idTask);
     }
 
+    @Override
+    protected void setStatus(Status status) {
+        super.setStatus(status);
+    }
 
-
-    public ArrayList<Integer> getSubTaskList() {
+    public ArrayList<SubTask> getSubTaskList() {
         return subTaskList;
     }
 

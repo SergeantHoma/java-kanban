@@ -4,30 +4,30 @@ import manager.abstractClass.Task;
 
 public class SingleTask extends Task {
 
-    protected SingleTask(String name, String description, int numberOfIdTask) {
-        super(name, description,numberOfIdTask);
+    public SingleTask(String name, String description) {
+        super(name, description);
     }
 
-    private SingleTask(String name, String description, int id, Status status) {
-        super(name, description,id);
-        this.status = status;
+    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
+    public SingleTask(SingleTask singleTask){
+        super(singleTask.getName(), singleTask.getDescription(),
+                singleTask.getIdTask(),singleTask.getStatus());
     }
-
-
 
     @Override
     public TypeOfTask getType() {
         return TypeOfTask.SINGLE_TASK;
     }
 
+    protected void update(String name,String description, Status status){
+        setName(name);
+        setDescription(description);
+        setStatus(status);
+    }
 
-    protected SingleTask update(String name,String description, Status status){
-        return new SingleTask(
-                name,
-                description,
-                this.getIdTask(),
-                status
-        );
+    @Override
+    protected void setIdTask(int idTask) {
+        super.setIdTask(idTask);
     }
 
     @Override

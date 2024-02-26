@@ -1,8 +1,6 @@
 package manager.impl;
 
 import manager.abstractClass.Task;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,9 +16,10 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldAddNewTaskInHistoryManager() {
-        SingleTask singleTask1 = taskManager.createNewSingleTask("Single task1","TestST1");
+        SingleTask singleTask = new SingleTask ("Single task1","TestST1");
+        taskManager.createNewSingleTask(singleTask);
 
-        taskManager.findTaskById(singleTask1.getIdTask());
+        taskManager.findTaskById(singleTask.getIdTask());
         ArrayList<Task> history =  taskManager.getHistory();
         assertNotNull(history, "Задачи не возвращаются.");
         assertEquals(1, history.size(), "Неверное количество задач.");
@@ -28,13 +27,16 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldContainOldAndChangedDataInHistoryManager(){
-        SingleTask singleTask = taskManager.createNewSingleTask("test","test");
-        SingleTask singleTaskToCompare = singleTask;
+        SingleTask singleTask = new SingleTask ("Single task1","TestST1");
+        taskManager.createNewSingleTask(singleTask);
+        SingleTask singleTaskToCompare = new SingleTask(singleTask);
         System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
-        singleTask = taskManager.updateSingleTask(singleTask,"testNew","testNew",Status.IN_PROGRESS);
+
+        taskManager.updateSingleTask(singleTask,"testNew","testNew",Status.IN_PROGRESS);
         System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
 
         ArrayList<Task> arrayList = taskManager.getHistory();
+
                 assertEquals(singleTaskToCompare.getStatus(), arrayList.get(0).getStatus());
                 assertEquals(singleTaskToCompare.getDescription(),arrayList.get(0).getDescription());
                 assertEquals(singleTaskToCompare.getName(),arrayList.get(0).getName());

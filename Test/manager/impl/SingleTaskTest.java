@@ -9,25 +9,29 @@ class SingleTaskTest {
 
     @Test
     void shouldMakeSingleTask(){
-        SingleTask singleTask = taskManager.createNewSingleTask("test","test");
+        SingleTask singleTask = new SingleTask ("test","test");
+        taskManager.createNewSingleTask(singleTask);
         assertNotNull(singleTask);
     }
 
     @Test
     void shouldChangeSingleTask(){
-        SingleTask singleTaskToChange = taskManager.createNewSingleTask("testToChange","testToChange");
-        singleTaskToChange = taskManager.updateSingleTask(singleTaskToChange,"changedName","changedDescription",Status.IN_PROGRESS);
-        assertEquals("changedName",singleTaskToChange.getName());
-        assertEquals("changedDescription",singleTaskToChange.getDescription());
-        assertEquals(Status.IN_PROGRESS,singleTaskToChange.getStatus());
+        SingleTask singleTask = new SingleTask ("test","test");
+        taskManager.createNewSingleTask(singleTask);
+        taskManager.updateSingleTask(singleTask,"changedName","changedDescription",Status.IN_PROGRESS);
+        assertEquals("changedName",singleTask.getName());
+        assertEquals("changedDescription",singleTask.getDescription());
+        assertEquals(Status.IN_PROGRESS,singleTask.getStatus());
     }
 
     @Test
     void shouldMakeTwoSingleTasksWithOneIdEquals(){
-        SingleTask singleTask1 = taskManager.createNewSingleTask("1","1");
-        SingleTask singleTask2 = new SingleTask("1","1",singleTask1.getIdTask());
+        SingleTask singleTask = new SingleTask ("test","test");
+        taskManager.createNewSingleTask(singleTask);
+        SingleTask singleTask2 = new SingleTask("test","test");
+        singleTask2.setIdTask(singleTask.getIdTask());
 
-        assertEquals(singleTask1.toString(),singleTask2.toString(),"Задачи не равны");
+        assertEquals(singleTask.toString(),singleTask2.toString(),"Задачи не равны");
     }
 
 }
