@@ -1,6 +1,8 @@
-package manager.impl;
+package manager.impl.tasks;
 
 import manager.abstractClass.Task;
+import manager.impl.enums.Status;
+import manager.impl.enums.TypeOfTask;
 
 public class SubTask extends Task {
     private EpicTask epicTask;
@@ -11,23 +13,19 @@ public class SubTask extends Task {
         epicTask.subTaskList.add(this);
     }
 
-    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
-    public SubTask(SubTask subTask){
-        super(subTask.getName(), subTask.getDescription(),
-                subTask.getIdTask(),subTask.getStatus());
-        setEpicTask(subTask.getEpicTask());
-    }
-
-    protected void update(String name,String description,EpicTask epicTask, Status status){
-        setName(name);
-        setDescription(description);
-        setEpicTask(epicTask);
+    private SubTask(String name, String description,EpicTask epicTask,Status status) {
+        super(name, description);
         setStatus(status);
+        setEpicTask(epicTask);
     }
 
-    @Override
-    protected void setIdTask(int idTask) {
-        super.setIdTask(idTask);
+    public SubTask update(String name,String description,EpicTask epicTask, Status status){
+        return new SubTask(
+                name,
+                description,
+                epicTask,
+                status
+        );
     }
 
     public EpicTask getEpicTask() {

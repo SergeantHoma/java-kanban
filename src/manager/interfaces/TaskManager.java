@@ -1,11 +1,11 @@
 package manager.interfaces;
 
 import manager.abstractClass.Task;
-import manager.impl.Status;
-import manager.impl.TypeOfTask;
-import manager.impl.EpicTask;
-import manager.impl.SingleTask;
-import manager.impl.SubTask;
+import manager.impl.enums.Status;
+import manager.impl.enums.TypeOfTask;
+import manager.impl.tasks.EpicTask;
+import manager.impl.tasks.SingleTask;
+import manager.impl.tasks.SubTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public interface TaskManager {
 
      void updateSingleTask(SingleTask singleTask,String name,String description, Status status);
 
-     void updateSubTask(SubTask subTask, String name,String description, EpicTask epicTask, Status status);
+     void updateSubTask(SubTask subTask, String name,String description, Status status);
 
      void updateEpicTask(EpicTask epicTask,String name,String description);
 
@@ -35,7 +35,7 @@ public interface TaskManager {
 
      List<Task> getAllTaskByType(TypeOfTask typeOfTask);
 
-     void deleteAllTask();
+     void deleteAllTaskByType(TypeOfTask typeOfTask);
 
      void deleteTaskById(Integer id);
 

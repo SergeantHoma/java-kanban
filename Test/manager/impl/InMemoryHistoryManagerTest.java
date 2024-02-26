@@ -1,6 +1,9 @@
 package manager.impl;
 
+import manager.abstractClass.Managers;
 import manager.abstractClass.Task;
+import manager.impl.enums.Status;
+import manager.impl.tasks.SingleTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +14,7 @@ class InMemoryHistoryManagerTest {
     manager.interfaces.TaskManager taskManager;
     @BeforeEach
     void beforeAll(){
-        taskManager = TaskManager.getDefault();
+        taskManager = Managers.getDefault();
     }
 
     @Test
@@ -25,24 +28,20 @@ class InMemoryHistoryManagerTest {
         assertEquals(1, history.size(), "Неверное количество задач.");
     }
 
-    @Test
+   @Test
     void shouldContainOldAndChangedDataInHistoryManager(){
         SingleTask singleTask = new SingleTask ("Single task1","TestST1");
         taskManager.createNewSingleTask(singleTask);
-        SingleTask singleTaskToCompare = new SingleTask(singleTask);
-        System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
+        taskManager.findTaskById(singleTask.getIdTask());
 
-        taskManager.updateSingleTask(singleTask,"testNew","testNew",Status.IN_PROGRESS);
-        System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
+        taskManager.updateSingleTask(singleTask,"testNew","testNew", Status.IN_PROGRESS);
+        taskManager.findTaskById(singleTask.getIdTask());
 
         ArrayList<Task> arrayList = taskManager.getHistory();
 
-                assertEquals(singleTaskToCompare.getStatus(), arrayList.get(0).getStatus());
-                assertEquals(singleTaskToCompare.getDescription(),arrayList.get(0).getDescription());
-                assertEquals(singleTaskToCompare.getName(),arrayList.get(0).getName());
-                assertEquals(singleTask.getStatus(),arrayList.get(1).getStatus());
-                assertEquals(singleTask.getDescription(),arrayList.get(1).getDescription());
-                assertEquals(singleTask.getName(),arrayList.get(1).getName());
+                assertNotEquals(arrayList.get(1).getStatus(), arrayList.get(0).getStatus());
+                assertNotEquals(arrayList.get(1).getDescription(),arrayList.get(0).getDescription());
+                assertNotEquals(arrayList.get(1).getName(),arrayList.get(0).getName());
         }
 
     }

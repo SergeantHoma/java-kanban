@@ -1,6 +1,8 @@
-package manager.impl;
+package manager.impl.tasks;
 
 import manager.abstractClass.Task;
+import manager.impl.enums.Status;
+import manager.impl.enums.TypeOfTask;
 
 public class SingleTask extends Task {
 
@@ -8,10 +10,9 @@ public class SingleTask extends Task {
         super(name, description);
     }
 
-    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
-    public SingleTask(SingleTask singleTask){
-        super(singleTask.getName(), singleTask.getDescription(),
-                singleTask.getIdTask(),singleTask.getStatus());
+    private SingleTask(String name, String description,Status status) {
+        super(name, description);
+        this.status = status;
     }
 
     @Override
@@ -19,18 +20,15 @@ public class SingleTask extends Task {
         return TypeOfTask.SINGLE_TASK;
     }
 
-    protected void update(String name,String description, Status status){
-        setName(name);
-        setDescription(description);
-        setStatus(status);
+    public SingleTask update(String name, String description, Status status) {
+        return new SingleTask(
+                name,
+                description,
+                status
+                );
     }
 
-    @Override
-    protected void setIdTask(int idTask) {
-        super.setIdTask(idTask);
-    }
-
-    @Override
+        @Override
     public String toString() {
         return "Tasks.SingleTask{" +
                 "name='" + this.getName() + '\'' +

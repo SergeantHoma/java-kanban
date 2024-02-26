@@ -1,4 +1,4 @@
-package manager.impl;
+package manager.impl.enums;
 
 public enum Status {
     NEW,

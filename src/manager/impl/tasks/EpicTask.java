@@ -1,36 +1,28 @@
-package manager.impl;
+package manager.impl.tasks;
 
 import java.util.ArrayList;
 import manager.abstractClass.Task;
+import manager.impl.enums.TypeOfTask;
 
 public class EpicTask extends Task {
-    protected ArrayList<SubTask> subTaskList;
+    public ArrayList<SubTask> subTaskList;
 
     public EpicTask(String name,String description){
         super(name,description);
         this.subTaskList = new ArrayList<>();
     }
 
-    //Конструкт для создания копии обхекта в класс InMemoryHistoryManager
-    public EpicTask(EpicTask epicTask){
-        super(epicTask.getName(), epicTask.getDescription(),
-                epicTask.getIdTask(),epicTask.getStatus());
-        subTaskList = epicTask.getSubTaskList();
+    private EpicTask(String name, String description,ArrayList arrayList) {
+        super(name, description);
+        this.subTaskList = arrayList;
     }
 
-    protected void update(String name,String description){
-        setName(name);
-        setDescription(description);
-    }
+    public EpicTask update(String name,String description,ArrayList arrayList) {
+        return new EpicTask(
+                name,
+        description,
+                arrayList);
 
-    @Override
-    protected void setIdTask(int idTask) {
-        super.setIdTask(idTask);
-    }
-
-    @Override
-    protected void setStatus(Status status) {
-        super.setStatus(status);
     }
 
     public ArrayList<SubTask> getSubTaskList() {

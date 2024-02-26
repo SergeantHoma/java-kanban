@@ -1,12 +1,15 @@
 import manager.abstractClass.Task;
-import manager.impl.*;
-import manager.impl.TaskManager;
+import manager.abstractClass.Managers;
+import manager.impl.tasks.EpicTask;
+import manager.impl.tasks.SingleTask;
+import manager.impl.tasks.SubTask;
+import manager.interfaces.TaskManager;
 
-import static manager.impl.TypeOfTask.*;
+import static manager.impl.enums.TypeOfTask.*;
 
 public class Main {
     public static void main(String[] args) {
-        manager.interfaces.TaskManager taskManager = TaskManager.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
         SingleTask singleTask1 = new SingleTask("Single task1","ST1");
         taskManager.createNewSingleTask(singleTask1);
@@ -24,20 +27,11 @@ public class Main {
         SubTask sT2_1 = new SubTask("Sub task 3","2_1 subtask", eT2);
         taskManager.createNewSubTask(sT2_1);
 
-        taskManager.updateSubTask(sT1_2,"1_3 subtask","2_1 subtask", eT1,Status.DONE);
-
-
-        System.out.println(taskManager.findTaskById(singleTask1.getIdTask()));
-        taskManager.updateSingleTask(singleTask1,"3","4",Status.IN_PROGRESS);
-        System.out.println(taskManager.findTaskById(singleTask1.getIdTask()));
-        taskManager.updateSingleTask(singleTask1,"1","2",Status.DONE);
-
         printAllTasks(taskManager);
     }
 
 
     private static void printAllTasks(manager.interfaces.TaskManager taskManager) {
-
         System.out.println("Задачи:");
         for (Task task : taskManager.getAllTaskByType(SINGLE_TASK)) {
             System.out.println(task);

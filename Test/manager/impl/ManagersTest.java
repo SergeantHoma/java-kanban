@@ -1,14 +1,15 @@
 package manager.impl;
 
+import manager.abstractClass.Managers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TaskManagerTest {
+class ManagersTest {
     @Test
     void shouldMakeHistoryAndTaskManager(){
-        assertNotNull(TaskManager.getDefault());
-        assertNotNull(TaskManager.getDefaultHistory());
+        assertNotNull(Managers.getDefault());
+        assertNotNull(Managers.getDefaultHistory());
     }
 
 }

@@ -1,11 +1,14 @@
 package manager.impl;
 
+import manager.abstractClass.Managers;
+import manager.impl.enums.Status;
+import manager.impl.tasks.SingleTask;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SingleTaskTest {
-    manager.interfaces.TaskManager taskManager = TaskManager.getDefault();
+    manager.interfaces.TaskManager taskManager = Managers.getDefault();
 
     @Test
     void shouldMakeSingleTask(){
@@ -18,10 +21,10 @@ class SingleTaskTest {
     void shouldChangeSingleTask(){
         SingleTask singleTask = new SingleTask ("test","test");
         taskManager.createNewSingleTask(singleTask);
-        taskManager.updateSingleTask(singleTask,"changedName","changedDescription",Status.IN_PROGRESS);
-        assertEquals("changedName",singleTask.getName());
-        assertEquals("changedDescription",singleTask.getDescription());
-        assertEquals(Status.IN_PROGRESS,singleTask.getStatus());
+        taskManager.updateSingleTask(singleTask,"changedName","changedDescription", Status.IN_PROGRESS);
+        assertEquals("changedName",taskManager.findTaskById(singleTask.getIdTask()).getName());
+        assertEquals("changedDescription",taskManager.findTaskById(singleTask.getIdTask()).getDescription());
+        assertEquals(Status.IN_PROGRESS,taskManager.findTaskById(singleTask.getIdTask()).getStatus());
     }
 
     @Test
@@ -31,7 +34,8 @@ class SingleTaskTest {
         SingleTask singleTask2 = new SingleTask("test","test");
         singleTask2.setIdTask(singleTask.getIdTask());
 
-        assertEquals(singleTask.toString(),singleTask2.toString(),"Задачи не равны");
+        assertEquals(taskManager.findTaskById(singleTask.getIdTask()).toString(),
+                singleTask2.toString(),"Задачи не равны");
     }
 
 }

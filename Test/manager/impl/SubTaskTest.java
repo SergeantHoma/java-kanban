@@ -1,5 +1,10 @@
 package manager.impl;
 
+import manager.abstractClass.Managers;
+import manager.impl.enums.Status;
+import manager.impl.enums.TypeOfTask;
+import manager.impl.tasks.EpicTask;
+import manager.impl.tasks.SubTask;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubTaskTest {
-    static manager.interfaces.TaskManager taskManager = TaskManager.getDefault();
+    static manager.interfaces.TaskManager taskManager = Managers.getDefault();
     public static EpicTask epicTaskTest;
     public static SubTask subTaskTest;
 
@@ -29,10 +34,11 @@ class SubTaskTest {
     @Test
     void shouldChangeSubTask(){
         taskManager.updateSubTask(subTaskTest,"SubTaskChangedName",
-                "SubTaskForEpicTaskTestChanged",epicTaskTest,Status.IN_PROGRESS);
-        assertEquals("SubTaskChangedName",subTaskTest.getName());
-        assertEquals("SubTaskForEpicTaskTestChanged",subTaskTest.getDescription());
-        assertEquals(Status.IN_PROGRESS,subTaskTest.getStatus());
+                "SubTaskForEpicTaskTestChanged",Status.IN_PROGRESS);
+        assertEquals("SubTaskChangedName",taskManager.findTaskById(subTaskTest.getIdTask()).getName());
+        assertEquals("SubTaskForEpicTaskTestChanged",taskManager.findTaskById(subTaskTest.getIdTask())
+                .getDescription());
+        assertEquals(Status.IN_PROGRESS,taskManager.findTaskById(subTaskTest.getIdTask()).getStatus());
     }
 
     @Test

@@ -1,40 +1,32 @@
 package manager.abstractClass;
 
-import manager.impl.Status;
-import manager.impl.TypeOfTask;
-
-import java.util.Objects;
+import manager.impl.enums.Status;
+import manager.impl.enums.TypeOfTask;
 
 public abstract class Task {
-    private String name;
-    private String description;
-    private int idTask;
-    private Status status = Status.NEW;
+    protected String name;
+    protected String description;
+    protected int idTask;
 
-    public Task(String name,String description,int id,Status status){
-        setName(name);
-        setDescription(description);
-        setIdTask(id);
-        setStatus(status);
-    }
+    protected Status status = Status.NEW;
     public Task(String name,String description){
         setName(name);
         setDescription(description);
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    protected void setIdTask(int idTask) {
+    public void setIdTask(int idTask) {
         this.idTask = idTask;
     }
 
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    protected void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
