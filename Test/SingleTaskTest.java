@@ -1,5 +1,3 @@
-package manager.impl;
-
 import manager.abstractClass.Managers;
 import manager.impl.enums.Status;
 import manager.impl.tasks.SingleTask;

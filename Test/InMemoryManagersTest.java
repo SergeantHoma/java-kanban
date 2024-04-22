@@ -1,5 +1,3 @@
-package manager.impl;
-
 import manager.abstractClass.Managers;
 import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;

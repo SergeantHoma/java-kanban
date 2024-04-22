@@ -1,5 +1,3 @@
-package manager.impl;
-
 import manager.abstractClass.Managers;
 import org.junit.jupiter.api.Test;
 
