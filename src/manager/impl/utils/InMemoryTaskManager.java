@@ -35,6 +35,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void remove(int id){
+        inMemoryHistoryManager.remove(id);
+    }
+
+    @Override
     public void addHistoryId(Task task)  {
         inMemoryHistoryManager.addHistoryId(task);
     }
@@ -190,18 +195,22 @@ public class InMemoryTaskManager implements TaskManager {
         if (!tasks.containsKey(id)) {
             System.out.println("Задача не найдена");
         } else if (tasks.get(id).getType() == TypeOfTask.EPIC_TASK){
-            EpicTask task = (EpicTask) tasks.get(id);
-            for (SubTask subTask: task.subTaskList ) {
+            EpicTask epicTask = (EpicTask) tasks.get(id);
+            remove(id);
+            for (SubTask subTask: epicTask.subTaskList ) {
                 tasks.remove(subTask.getIdTask());
+                remove(subTask.getIdTask());
             }
             tasks.remove(id);
         } else if (tasks.get(id).getType() == TypeOfTask.SUB_TASK){
-            SubTask task = (SubTask) tasks.get(id);
-            EpicTask epicTask = task.getEpicTask();
+            SubTask subTask = (SubTask) tasks.get(id);
+            EpicTask epicTask = subTask.getEpicTask();
             tasks.remove(id);
-            epicTask.subTaskList.remove(task);
+            remove(id);
+            epicTask.subTaskList.remove(subTask);
             isEpicDone(epicTask);
         } else {
+            remove(id);
             tasks.remove(id);
         }
     }

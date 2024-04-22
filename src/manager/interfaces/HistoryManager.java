@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public interface HistoryManager {
     void addHistoryId(Task task);
 
-    ArrayList<Task> getHistory();
+    void remove(int id);
 
+    ArrayList<Task> getHistory();
 }
