@@ -11,7 +11,8 @@ public abstract class Task {
     protected int idTask;
 
     protected Status status = Status.NEW;
-    public Task(String name,String description){
+
+    public Task(String name,String description) {
         setName(name);
         setDescription(description);
     }

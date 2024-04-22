@@ -7,7 +7,7 @@ import manager.impl.enums.TypeOfTask;
 public class EpicTask extends Task {
     public ArrayList<SubTask> subTaskList;
 
-    public EpicTask(String name,String description){
+    public EpicTask(String name,String description) {
         super(name,description);
         this.subTaskList = new ArrayList<>();
     }

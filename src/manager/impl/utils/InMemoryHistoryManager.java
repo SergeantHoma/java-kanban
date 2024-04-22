@@ -5,7 +5,6 @@ import manager.interfaces.HistoryManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -20,13 +19,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void addHistoryId(Task task){
-        if ((map.containsKey(task.getIdTask())) && (customLinkedList.tail.task.getIdTask() == task.getIdTask())){
-            return;
-        } else if (map.containsKey(task.getIdTask())){
+    public void addHistoryId(Task task) {
+         if (map.containsKey(task.getIdTask())) {
             customLinkedList.removeNode(map.get(task.getIdTask()));
             map.put(task.getIdTask(), customLinkedList.linkLast(task));
-        } else if ((customLinkedList.head == customLinkedList.tail) && customLinkedList.head != null ) {
+        } else if ((customLinkedList.head == customLinkedList.tail) && customLinkedList.head != null) {
             Node newNode = customLinkedList.linkLast(task);
             Node newHeadNode = new Node(null,newNode.prev.task,newNode);
             map.put(newHeadNode.task.getIdTask(),newHeadNode);
@@ -51,70 +48,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         map.remove(id);
         customLinkedList.removeNode(nodeToRemove);
-    }
-}
-
-final class CustomLinkedList{
-    Node head;
-    Node tail;
-
-    public CustomLinkedList() {
-        head = null;
-        tail = null;
-    }
-
-     Node linkLast(Task task){
-        if (head == null){
-            Node newNode = new Node(null, task, null);
-            head = newNode;
-            tail = newNode;
-            return newNode;
-        }
-        Node newNode = new Node(tail, task, null);
-        tail.next = newNode;
-        tail = newNode;
-        return newNode;
-    }
-
-     ArrayList<Task> getTasks(){
-        ArrayList<Task> toReturn = new ArrayList<>();
-
-        Node current = head;
-        while (current != null){
-            toReturn.add(current.task);
-            current = current.next;
-        }
-
-        return toReturn;
-    }
-
-    void removeNode(Node nodeToRemove){
-        //prev - до нее, next - после
-        if(nodeToRemove.next == null && nodeToRemove.prev == null){
-            //Один элемент в списке
-            tail = null;
-            head = null;
-        } else if(nodeToRemove.prev == null){
-            //голова
-            head = nodeToRemove.next;
-
-            nodeToRemove.next.prev = null;
-            nodeToRemove.next = null;
-
-        }  else if (nodeToRemove.next == null ){
-            //хвост
-            tail = nodeToRemove.prev;
-
-            nodeToRemove.prev.next = null;
-            nodeToRemove.prev = null;
-
-        } else {
-            //тело
-            nodeToRemove.prev.next = nodeToRemove.next;
-            nodeToRemove.next.prev = nodeToRemove.prev;
-
-            nodeToRemove.next = null;
-            nodeToRemove.prev = null;
-        }
     }
 }

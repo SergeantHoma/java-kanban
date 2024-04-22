@@ -2,7 +2,7 @@ package manager.impl.utils;
 
 import manager.abstractClass.Task;
 
-final class Node{
+final class Node {
     final Task task;
     Node prev;
     Node next;
