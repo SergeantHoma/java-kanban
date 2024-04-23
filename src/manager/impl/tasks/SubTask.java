@@ -19,7 +19,7 @@ public class SubTask extends Task {
         setEpicTask(epicTask);
     }
 
-    public SubTask update(String name,String description,EpicTask epicTask, Status status){
+    public SubTask update(String name,String description,EpicTask epicTask, Status status) {
         return new SubTask(
                 name,
                 description,

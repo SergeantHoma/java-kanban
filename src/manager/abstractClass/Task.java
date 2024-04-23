@@ -3,13 +3,16 @@ package manager.abstractClass;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
 
+import java.util.Objects;
+
 public abstract class Task {
     protected String name;
     protected String description;
     protected int idTask;
 
     protected Status status = Status.NEW;
-    public Task(String name,String description){
+
+    public Task(String name,String description) {
         setName(name);
         setDescription(description);
     }
@@ -42,6 +45,19 @@ public abstract class Task {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return idTask == task.idTask && name.equals(task.name) && description.equals(task.description) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, idTask, status);
     }
 
     public int getIdTask() {

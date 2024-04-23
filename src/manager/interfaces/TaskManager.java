@@ -17,6 +17,8 @@ public interface TaskManager {
 
      ArrayList<Task> getHistory();
 
+     void remove(int id);
+
      void createNewSubTask(SubTask subTask);
 
      void creatNewEpicTask(EpicTask epicTask);
