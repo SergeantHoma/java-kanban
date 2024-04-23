@@ -41,7 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addHistoryId(Task task)  {
-        inMemoryHistoryManager.addHistoryId(task);
+        inMemoryHistoryManager.add(task);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task findTaskById(Integer id) {
         if (tasks.containsKey(id)) {
-            inMemoryHistoryManager.addHistoryId(tasks.get(id));
+            inMemoryHistoryManager.add(tasks.get(id));
             return tasks.get(id);
         } else {
             return null;

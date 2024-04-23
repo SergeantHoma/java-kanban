@@ -9,34 +9,36 @@ import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final CustomLinkedList customLinkedList;
+    private Node head;
+    private Node tail;
+
     private final Map<Integer, Node> map;
 
 
     public InMemoryHistoryManager() {
-        this.customLinkedList = new CustomLinkedList();
+        head = null;
+        tail = null;
         this.map = new HashMap<>();
     }
 
     @Override
-    public void addHistoryId(Task task) {
-         if (map.containsKey(task.getIdTask())) {
-            customLinkedList.removeNode(map.get(task.getIdTask()));
-            map.put(task.getIdTask(), customLinkedList.linkLast(task));
-        } else if ((customLinkedList.head == customLinkedList.tail) && customLinkedList.head != null) {
-            Node newNode = customLinkedList.linkLast(task);
-            Node newHeadNode = new Node(null,newNode.prev.task,newNode);
-            map.put(newHeadNode.task.getIdTask(),newHeadNode);
-            map.put(task.getIdTask(), newNode);
-        } else {
-            Node newNode = customLinkedList.linkLast(task);
-            map.put(task.getIdTask(), newNode);
+    public void add(Task task) {
+        if (task == null) {
+            return;
         }
+
+        int id = task.getIdTask();
+        Node rem = map.get(id);
+        if (rem != null)
+            removeNode(rem);
+
+        Node last = linkLast(task);
+        map.put(id, last);
     }
 
     @Override
     public ArrayList<Task> getHistory() {
-        return customLinkedList.getTasks();
+        return getTasks();
     }
 
     @Override
@@ -47,6 +49,59 @@ public class InMemoryHistoryManager implements HistoryManager {
             return;
         }
         map.remove(id);
-        customLinkedList.removeNode(nodeToRemove);
+        removeNode(nodeToRemove);
+    }
+
+    private Node linkLast(Task task) {
+        final Node node = new Node(tail, task,  null);
+        if (head == null) {
+            head = node;
+        } else {
+            tail.next = node;
+        }
+        tail = node;
+        return node;
+    }
+
+    private ArrayList<Task> getTasks() {
+        ArrayList<Task> toReturn = new ArrayList<>();
+
+        Node current = head;
+        while (current != null) {
+            toReturn.add(current.task);
+            current = current.next;
+        }
+
+        return toReturn;
+    }
+
+    private void removeNode(Node nodeToRemove) {
+        //prev - до нее, next - после
+        if (nodeToRemove.next == null && nodeToRemove.prev == null) {
+            //Один элемент в списке
+            tail = null;
+            head = null;
+        } else if (nodeToRemove.prev == null) {
+            //голова
+            head = nodeToRemove.next;
+
+            nodeToRemove.next.prev = null;
+            nodeToRemove.next = null;
+
+        } else if (nodeToRemove.next == null) {
+            //хвост
+            tail = nodeToRemove.prev;
+
+            nodeToRemove.prev.next = null;
+            nodeToRemove.prev = null;
+
+        } else {
+            //тело
+            nodeToRemove.prev.next = nodeToRemove.next;
+            nodeToRemove.next.prev = nodeToRemove.prev;
+
+            nodeToRemove.next = null;
+            nodeToRemove.prev = null;
+        }
     }
 }
