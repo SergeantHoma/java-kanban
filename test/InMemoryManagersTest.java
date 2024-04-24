@@ -72,9 +72,9 @@ class InMemoryManagersTest {
         SingleTask singleTaskTwo = new SingleTask ("TestSingle","TestDescription");
         taskManager.createNewSingleTask(singleTaskTwo);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.SINGLE_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.TASK);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SINGLE_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.TASK));
     }
 
     @Test
@@ -90,12 +90,12 @@ class InMemoryManagersTest {
         SubTask subTaskForSecondEpicTask = new SubTask ("TestSub","TestDescription",epicTaskTwo);
         taskManager.createNewSubTask(subTaskForSecondEpicTask);
 
-        List<Task> epicTaskArrayList = taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK);
+        List<Task> epicTaskArrayList = taskManager.getAllTaskByType(TypeOfTask.EPIC);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.SUB_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.SUBTASK);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
-        assertEquals(epicTaskArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUBTASK));
+        assertEquals(epicTaskArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC));
     }
 
     @Test
@@ -107,10 +107,10 @@ class InMemoryManagersTest {
         SubTask subTaskTwo = new SubTask ("TestSubTwo","TestDescriptionTwo",epicTask);
         taskManager.createNewSubTask(subTaskTwo);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.EPIC_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.EPIC);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUBTASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC));
     }
 
 

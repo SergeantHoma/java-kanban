@@ -34,7 +34,7 @@ public class SubTask extends Task {
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.SUB_TASK;
+        return TypeOfTask.SUBTASK;
     }
 
     public void setEpicTask(EpicTask epicTask) {
@@ -43,12 +43,11 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "Tasks.SubTask{" +
-                "name='" + this.getName() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", idTask=" + this.getIdTask() +
-                ", epicTask=" + epicTask.getName() +
-                ", status=" + this.getStatus() +
-                '}';
+        return this.getIdTask() + "," +
+                this.getType() + "," +
+                this.getName() + ',' +
+                this.getStatus() + "," +
+                this.getDescription() + "," +
+                this.getEpicTask().getIdTask();
     }
 }

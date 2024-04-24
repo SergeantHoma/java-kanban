@@ -1,0 +1,6 @@
+id,type,name,description,status,epicId
+1,TASK,Single task1,NEW,ST1
+2,EPIC,Epic task 1,NEW,1 subtask
+3,SUBTASK,Sub task 1,NEW,1_1 subtask,2
+
+История пуста

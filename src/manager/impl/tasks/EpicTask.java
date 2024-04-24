@@ -31,16 +31,15 @@ public class EpicTask extends Task {
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.EPIC_TASK;
+        return TypeOfTask.EPIC;
     }
 
     @Override
     public String toString() {
-        return "Tasks.EpicTask{ name='" + this.getName() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", idTask=" + this.getIdTask() + '\'' +
-                ", subTaskList=" + subTaskList +
-                ", status=" + this.getStatus() + '\'' +
-                '}';
+        return  this.getIdTask() + "," +
+                this.getType() + "," +
+                this.getName() + ',' +
+                this.getStatus() + "," +
+                this.getDescription();
     }
 }

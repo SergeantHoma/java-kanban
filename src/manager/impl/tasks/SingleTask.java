@@ -17,7 +17,7 @@ public class SingleTask extends Task {
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.SINGLE_TASK;
+        return TypeOfTask.TASK;
     }
 
     public SingleTask update(String name, String description, Status status) {
@@ -30,11 +30,10 @@ public class SingleTask extends Task {
 
         @Override
     public String toString() {
-        return "Tasks.SingleTask{" +
-                "name='" + this.getName() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", idTask=" + this.getIdTask() +
-                ", status=" + this.getStatus() +
-                '}';
+        return  this.getIdTask() + "," +
+                this.getType() + "," +
+                this.getName() + ',' +
+                this.getStatus() + "," +
+                this.getDescription();
     }
 }
