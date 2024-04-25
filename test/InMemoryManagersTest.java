@@ -60,9 +60,20 @@ class InMemoryManagersTest {
         SubTask subTask = new SubTask ("TestSub","TestDescription",epicTask);
         taskManager.createNewSubTask(subTask);
 
-        System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
-        System.out.println(taskManager.findTaskById(epicTask.getIdTask()));
-        System.out.println(taskManager.findTaskById(subTask.getIdTask()));
+        assertEquals(singleTask.getName(),taskManager.findTaskById(singleTask.getIdTask()).getName());
+        assertEquals(singleTask.getDescription(),taskManager.findTaskById(singleTask.getIdTask()).getDescription());
+        assertEquals(singleTask.getType(),taskManager.findTaskById(singleTask.getIdTask()).getType());
+        assertEquals(singleTask.getStatus(),taskManager.findTaskById(singleTask.getIdTask()).getStatus());
+
+        assertEquals(epicTask.getName(),taskManager.findTaskById(epicTask.getIdTask()).getName());
+        assertEquals(epicTask.getDescription(),taskManager.findTaskById(epicTask.getIdTask()).getDescription());
+        assertEquals(epicTask.getType(),taskManager.findTaskById(epicTask.getIdTask()).getType());
+        assertEquals(epicTask.getStatus(),taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+
+        assertEquals(subTask.getName(),taskManager.findTaskById(subTask.getIdTask()).getName());
+        assertEquals(subTask.getDescription(),taskManager.findTaskById(subTask.getIdTask()).getDescription());
+        assertEquals(subTask.getType(),taskManager.findTaskById(subTask.getIdTask()).getType());
+        assertEquals(subTask.getStatus(),taskManager.findTaskById(subTask.getIdTask()).getStatus());
     }
 
     @Test
@@ -72,9 +83,9 @@ class InMemoryManagersTest {
         SingleTask singleTaskTwo = new SingleTask ("TestSingle","TestDescription");
         taskManager.createNewSingleTask(singleTaskTwo);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.SINGLE_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.TASK);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SINGLE_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.TASK));
     }
 
     @Test
@@ -90,12 +101,12 @@ class InMemoryManagersTest {
         SubTask subTaskForSecondEpicTask = new SubTask ("TestSub","TestDescription",epicTaskTwo);
         taskManager.createNewSubTask(subTaskForSecondEpicTask);
 
-        List<Task> epicTaskArrayList = taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK);
+        List<Task> epicTaskArrayList = taskManager.getAllTaskByType(TypeOfTask.EPIC);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.SUB_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.SUBTASK);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
-        assertEquals(epicTaskArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUBTASK));
+        assertEquals(epicTaskArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC));
     }
 
     @Test
@@ -107,10 +118,10 @@ class InMemoryManagersTest {
         SubTask subTaskTwo = new SubTask ("TestSubTwo","TestDescriptionTwo",epicTask);
         taskManager.createNewSubTask(subTaskTwo);
 
-        taskManager.deleteAllTaskByType(TypeOfTask.EPIC_TASK);
+        taskManager.deleteAllTaskByType(TypeOfTask.EPIC);
         ArrayList emptyArrayList = new ArrayList();
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
-        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.SUBTASK));
+        assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC));
     }
 
 

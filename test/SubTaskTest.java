@@ -20,8 +20,8 @@ class SubTaskTest {
         taskManager.creatNewEpicTask(epicTaskTest);
         subTaskTest = new SubTask ("SubTask", "SubTaskForEpicTaskTest", epicTaskTest);
         taskManager.createNewSubTask(subTaskTest);
-        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.EPIC_TASK));
-        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.SUB_TASK));
+        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.EPIC));
+        assertNotNull(taskManager.getAllTaskByType(TypeOfTask.SUBTASK));
     }
 
     @Test

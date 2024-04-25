@@ -5,7 +5,7 @@ import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;
 
 public class EpicTask extends Task {
-    public ArrayList<SubTask> subTaskList;
+    private ArrayList<SubTask> subTaskList;
 
     public EpicTask(String name,String description) {
         super(name,description);
@@ -26,21 +26,28 @@ public class EpicTask extends Task {
     }
 
     public ArrayList<SubTask> getSubTaskList() {
-        return subTaskList;
+        return new ArrayList<SubTask>(subTaskList);
+    }
+
+    public void addSubTask(SubTask subTask) {
+        subTaskList.add(subTask);
+    }
+
+    public void removeSubTask(SubTask subTask) {
+        subTaskList.remove(subTask);
     }
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.EPIC_TASK;
+        return TypeOfTask.EPIC;
     }
 
     @Override
     public String toString() {
-        return "Tasks.EpicTask{ name='" + this.getName() + '\'' +
-                ", description='" + this.getDescription() + '\'' +
-                ", idTask=" + this.getIdTask() + '\'' +
-                ", subTaskList=" + subTaskList +
-                ", status=" + this.getStatus() + '\'' +
-                '}';
+        return  this.getIdTask() + "," +
+                this.getType() + "," +
+                this.getName() + ',' +
+                this.getStatus() + "," +
+                this.getDescription();
     }
 }
