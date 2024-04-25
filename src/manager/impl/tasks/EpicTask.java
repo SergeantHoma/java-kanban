@@ -5,7 +5,7 @@ import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;
 
 public class EpicTask extends Task {
-    public ArrayList<SubTask> subTaskList;
+    private ArrayList<SubTask> subTaskList;
 
     public EpicTask(String name,String description) {
         super(name,description);
@@ -26,7 +26,15 @@ public class EpicTask extends Task {
     }
 
     public ArrayList<SubTask> getSubTaskList() {
-        return subTaskList;
+        return new ArrayList<SubTask>(subTaskList);
+    }
+
+    public void addSubTask(SubTask subTask) {
+        subTaskList.add(subTask);
+    }
+
+    public void removeSubTask(SubTask subTask) {
+        subTaskList.remove(subTask);
     }
 
     @Override

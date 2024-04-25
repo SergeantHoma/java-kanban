@@ -26,8 +26,7 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void saveAnEmptyFile() throws IOException {
-        TaskManager taskManager = new FileBackedTaskManager(new InMemoryHistoryManager(),
-                new File("resource/empty.csv"));
+        TaskManager taskManager = Managers.getFileBackedTaskManager("resource/empty.csv");
 
         File file = new File("resource/empty.csv");
         String dataFromFile = Files.readString(file.toPath());
@@ -54,8 +53,7 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void saveMultipleFiles() throws IOException {
-        TaskManager taskManager = new FileBackedTaskManager(new InMemoryHistoryManager(),
-                new File("resource/test.csv"));
+        TaskManager taskManager = Managers.getFileBackedTaskManager("resource/test.csv");
 
         SingleTask singleTask1 = new SingleTask("Single task1","ST1");
         taskManager.createNewSingleTask(singleTask1);

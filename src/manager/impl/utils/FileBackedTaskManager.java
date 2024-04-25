@@ -15,6 +15,7 @@ import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
+    private static final String MASSAGE_OF_EMPTY_HISTORY = "История пуста";
 
     public FileBackedTaskManager(HistoryManager inMemoryHistoryManager,File file) {
         super(inMemoryHistoryManager);
@@ -26,7 +27,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             List<Task> dataToSave = new ArrayList<>(getAllTask());
             bufferedWriter.write(createDataToSave(dataToSave, getHistory()));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerSaveException("Ошибка сохранения файла,\n" + e.getMessage());
         }
     }
 
@@ -99,7 +100,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         dataToSave.append("\n");
         if (history.isEmpty())
-            dataToSave.append("История пуста");
+            dataToSave.append(MASSAGE_OF_EMPTY_HISTORY);
         else {
             dataToSave.append(historyToString(history));
         }
@@ -117,7 +118,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     static List<Integer> historyFromString(String value) {
         String regex = "^\\d+(,\\d+)*,$";
         List<Integer> data = new ArrayList<>();
-        if (value.equals("История пуста") || value.isBlank()) {
+        if (value.equals(MASSAGE_OF_EMPTY_HISTORY) || value.isBlank()) {
             return data;
         }
         if (!value.matches(regex)) {
@@ -175,13 +176,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void updateEpicTask(EpicTask epicTask, String name, String description) {
         super.updateEpicTask(epicTask,name,description);
         save();
-    }
-
-    @Override
-    public ArrayList<Task> getAllTaskByType(TypeOfTask typeOfTask) {
-        ArrayList<Task> result = super.getAllTaskByType(typeOfTask);
-        save();
-        return result;
     }
 
     @Override

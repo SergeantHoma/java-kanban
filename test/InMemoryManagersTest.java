@@ -60,9 +60,20 @@ class InMemoryManagersTest {
         SubTask subTask = new SubTask ("TestSub","TestDescription",epicTask);
         taskManager.createNewSubTask(subTask);
 
-        System.out.println(taskManager.findTaskById(singleTask.getIdTask()));
-        System.out.println(taskManager.findTaskById(epicTask.getIdTask()));
-        System.out.println(taskManager.findTaskById(subTask.getIdTask()));
+        assertEquals(singleTask.getName(),taskManager.findTaskById(singleTask.getIdTask()).getName());
+        assertEquals(singleTask.getDescription(),taskManager.findTaskById(singleTask.getIdTask()).getDescription());
+        assertEquals(singleTask.getType(),taskManager.findTaskById(singleTask.getIdTask()).getType());
+        assertEquals(singleTask.getStatus(),taskManager.findTaskById(singleTask.getIdTask()).getStatus());
+
+        assertEquals(epicTask.getName(),taskManager.findTaskById(epicTask.getIdTask()).getName());
+        assertEquals(epicTask.getDescription(),taskManager.findTaskById(epicTask.getIdTask()).getDescription());
+        assertEquals(epicTask.getType(),taskManager.findTaskById(epicTask.getIdTask()).getType());
+        assertEquals(epicTask.getStatus(),taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+
+        assertEquals(subTask.getName(),taskManager.findTaskById(subTask.getIdTask()).getName());
+        assertEquals(subTask.getDescription(),taskManager.findTaskById(subTask.getIdTask()).getDescription());
+        assertEquals(subTask.getType(),taskManager.findTaskById(subTask.getIdTask()).getType());
+        assertEquals(subTask.getStatus(),taskManager.findTaskById(subTask.getIdTask()).getStatus());
     }
 
     @Test
