@@ -69,9 +69,55 @@ class EpicTaskTest {
         taskManager.deleteTaskById(epicTask.getIdTask());
 
         taskManager.findTaskById(epicTask.getIdTask());
-        taskManager.findTaskById(subTaskForDelete_1.getIdTask());
-        taskManager.findTaskById(subTaskForDelete_2.getIdTask());
+        assertNull(taskManager.findTaskById(subTaskForDelete_1.getIdTask()));
+        assertNull(taskManager.findTaskById(subTaskForDelete_2.getIdTask()));
     }
 
+    @Test
+    void shouldMakeSubTasksWithStatusNEW(){
+        SubTask subTask1 = new SubTask ("testForEpic_1",
+                "testForEpic_1",epicTask);
+        SubTask subTask2 = new SubTask("testForEpic_2",
+                "testForEpic_2",epicTask);
+        taskManager.createNewSubTask(subTask1);
+        taskManager.createNewSubTask(subTask2);
+        assertEquals(Status.NEW,taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+    }
+
+    @Test
+    void shouldMakeSubTasksWithStatusDONE(){
+        SubTask subTask1 = new SubTask ("testForEpic_1",
+                "testForEpic_1",epicTask);
+        SubTask subTask2 = new SubTask("testForEpic_2",
+                "testForEpic_2",epicTask);
+        taskManager.createNewSubTask(subTask1);
+        taskManager.createNewSubTask(subTask2);
+        taskManager.updateSubTask(subTask1,"testForEpic_1","testForEpic_1",Status.DONE);
+        taskManager.updateSubTask(subTask2,"testForEpic_2","testForEpic_2",Status.DONE);
+        assertEquals(Status.DONE,taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+    }
+
+    @Test
+    void shouldMakeSubTasksWithStatusDONEAndNEW() {
+        SubTask subTask1 = new SubTask("testForEpic_1",
+                "testForEpic_1", epicTask);
+        SubTask subTask2 = new SubTask("testForEpic_2",
+                "testForEpic_2", epicTask);
+        taskManager.updateSubTask(subTask1,"testForEpic_1","testForEpic_1",Status.DONE);
+        assertEquals(Status.IN_PROGRESS,taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+    }
+
+    @Test
+    void shouldMakeSubTasksWithStatusINPROGRESS(){
+        SubTask subTask1 = new SubTask ("testForEpic_1",
+                "testForEpic_1",epicTask);
+        SubTask subTask2 = new SubTask("testForEpic_2",
+                "testForEpic_2",epicTask);
+        taskManager.createNewSubTask(subTask1);
+        taskManager.createNewSubTask(subTask2);
+        taskManager.updateSubTask(subTask1,"testForEpic_1","testForEpic_1",Status.IN_PROGRESS);
+        taskManager.updateSubTask(subTask2,"testForEpic_2","testForEpic_2",Status.IN_PROGRESS);
+        assertEquals(Status.IN_PROGRESS,taskManager.findTaskById(epicTask.getIdTask()).getStatus());
+    }
 
 }

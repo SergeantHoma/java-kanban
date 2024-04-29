@@ -1,5 +1,6 @@
 package manager.impl.utils;
 
+import exceptions.ManagerSaveException;
 import manager.abstractClass.Task;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
@@ -9,15 +10,17 @@ import manager.impl.tasks.SubTask;
 import manager.interfaces.HistoryManager;
 import manager.interfaces.TaskManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
+    protected static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     private int numberOfIdTask;
-    protected final Map<Integer,Task> tasks;
+
+    protected  Map<Integer,Task> tasks;
     protected final HistoryManager inMemoryHistoryManager;
+    protected final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     public InMemoryTaskManager(HistoryManager inMemoryHistoryManager) {
         numberOfIdTask = 0;
@@ -52,6 +55,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void createNewSingleTask(SingleTask singleTask) {
         incrementId();
         singleTask.setIdTask(numberOfIdTask);
+        if (isStartTimeExist(singleTask)) {
+            checkIfIntersectedTaskExist(singleTask);
+            prioritizedTasks.add(singleTask);
+        }
         saveNewTask(singleTask);
     }
 
@@ -67,6 +74,11 @@ public class InMemoryTaskManager implements TaskManager {
         incrementId();
         subTask.setIdTask(numberOfIdTask);
         saveNewTask(subTask);
+        if (isStartTimeExist(subTask)) {
+            checkIfIntersectedTaskExist(subTask);
+            prioritizedTasks.add(subTask);
+        }
+        updateEpicDurationAndTime(subTask.getEpicTask());
         isEpicDone(subTask.getEpicTask());
     }
 
@@ -103,19 +115,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSingleTask(SingleTask singleTask,String name,String description, Status status) {
+    public void updateSingleTask(SingleTask singleTask, String name, String description, Status status) {
         SingleTask newSingleTask = singleTask.update(name,description,status);
         newSingleTask.setIdTask(singleTask.getIdTask());
+        checkDurationAndStartTimeForUpdate(singleTask,newSingleTask);
+        checkForUpdate(newSingleTask);
         tasks.put(newSingleTask.getIdTask(), newSingleTask);
     }
 
     @Override
     public void updateSubTask(SubTask subTask, String name,String description, Status status) {
             SubTask newSubTask = subTask.update(name,description,subTask.getEpicTask(),status);
+            checkDurationAndStartTimeForUpdate(subTask,newSubTask);
             newSubTask.setIdTask(subTask.getIdTask());
-            tasks.put(newSubTask.getIdTask(),newSubTask);
             newSubTask.getEpicTask().removeSubTask(subTask);
             newSubTask.getEpicTask().addSubTask(newSubTask);
+            tasks.put(newSubTask.getIdTask(),newSubTask);
+            checkForUpdate(newSubTask);
+            updateEpicDurationAndTime(newSubTask.getEpicTask());
             isEpicDone(newSubTask.getEpicTask());
     }
 
@@ -210,6 +227,7 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.remove(id);
             remove(id);
             epicTask.removeSubTask(subTask);
+            updateEpicDurationAndTime(epicTask);
             isEpicDone(epicTask);
         } else {
             remove(id);
@@ -225,5 +243,90 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             return null;
         }
+    }
+
+    public TreeSet<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
+    private boolean isTasksIntersected(Task firstTask, Task secondTask) {
+        return (firstTask.getEndTime().isAfter(secondTask.getStartTime())
+                && firstTask.getEndTime().isBefore(secondTask.getEndTime())
+                || secondTask.getEndTime().isAfter(firstTask.getStartTime())
+                && secondTask.getEndTime().isBefore(firstTask.getEndTime())
+                || firstTask.getStartTime().isEqual(secondTask.getStartTime())
+                || firstTask.getEndTime().isEqual(secondTask.getEndTime()));
+    }
+
+    private void checkIfIntersectedTaskExist(Task currentTask) {
+        if (currentTask.getStartTime() == null) {
+            return;
+        }
+        Optional<Task> intersectedTask = prioritizedTasks.stream()
+                .filter(task -> isTasksIntersected(currentTask, task))
+                .findFirst();
+        if (intersectedTask.isPresent()) {
+            throw new ManagerSaveException("Ошибка: задачи пересекаются по времени");
+        }
+    }
+
+    private void checkForUpdate(Task task) {
+        if (isStartTimeExist(tasks.get(task.getIdTask()))) {
+            prioritizedTasks.remove(tasks.get(task.getIdTask()));
+        }
+        if (isStartTimeExist(task)) {
+            checkIfIntersectedTaskExist(task);
+            prioritizedTasks.add(task);
+        }
+    }
+
+    private void checkDurationAndStartTimeForUpdate(Task oldTask,Task newTask) {
+        if (oldTask.getDuration() == null) {
+            newTask.setDuration(null);
+        } else {
+            newTask.setDuration(oldTask.getDuration().toMinutesPart());
+        }
+        if (oldTask.getStartTime() == null) {
+            newTask.setStartTime(null);
+        } else {
+            newTask.setStartTime(oldTask.getStartTime().format(DATE_TIME_FORMATTER));
+        }
+    }
+
+    private boolean isStartTimeExist(Task task) {
+        if (task == null) {
+            return false;
+        }
+        return task.getStartTime() != null;
+    }
+
+    private void updateEpicDurationAndTime(EpicTask epic) {
+        //Если список SubTask пуст - то выставляем начало и окончание в ноль
+        if (epic.getSubTaskList().isEmpty()) {
+            epic.setDuration(0);
+            epic.setStartTime(null);
+            epic.setEndTime(null);
+            return;
+        }
+        //Время начала
+        Optional<Task> firstSubtask = getAllTaskByType(TypeOfTask.SUBTASK).stream()
+                .filter(subtasksStart -> epic.getSubTaskList()
+                        .contains(subtasksStart.getIdTask()))
+                .min(Comparator.comparing(Task::getStartTime))
+                .stream().findFirst();
+        firstSubtask.ifPresent(value -> epic.setStartTime(value.getStartTime().toString()));
+        //Время конца
+        Optional<Task> lastSubtask = getAllTaskByType(TypeOfTask.SUBTASK).stream()
+                .filter(subtasksEnd -> epic.getSubTaskList()
+                        .contains(subtasksEnd.getIdTask()))
+                .max(Comparator.comparing(Task::getEndTime))
+                .stream().findFirst();
+        lastSubtask.ifPresent(value -> epic.setEndTime(value.getEndTime()));
+
+        long totalDuration = 0;
+        for (SubTask s : epic.getSubTaskList())
+            if (s.getDuration() != null)
+            totalDuration = s.getDuration().toMinutes();
+        epic.setDuration((int) totalDuration);
     }
 }

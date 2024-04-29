@@ -6,9 +6,9 @@ import manager.impl.enums.TypeOfTask;
 import manager.impl.tasks.EpicTask;
 import manager.impl.tasks.SingleTask;
 import manager.impl.tasks.SubTask;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
      void createNewSingleTask(SingleTask singleTask);
@@ -29,7 +29,7 @@ public interface TaskManager {
 
      void updateSingleTask(SingleTask singleTask,String name,String description, Status status);
 
-     void updateSubTask(SubTask subTask, String name,String description, Status status);
+    void updateSubTask(SubTask subTask, String name, String description, Status status);
 
      void updateEpicTask(EpicTask epicTask,String name,String description);
 
@@ -42,4 +42,6 @@ public interface TaskManager {
      void deleteTaskById(Integer id);
 
      Task findTaskById(Integer id);
+
+     TreeSet<Task> getPrioritizedTasks();
 }

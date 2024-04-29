@@ -11,13 +11,15 @@ import manager.interfaces.TaskManager;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
     private static final String MASSAGE_OF_EMPTY_HISTORY = "История пуста";
 
-    public FileBackedTaskManager(HistoryManager inMemoryHistoryManager,File file) {
+    public FileBackedTaskManager(HistoryManager inMemoryHistoryManager, File file) {
         super(inMemoryHistoryManager);
         this.file = file;
     }
@@ -38,7 +40,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String[] splitData = dataFromFile.split("\n");
 
             for (int i = 1; i < splitData.length - 2; i++) {
-                Task task = fromString(splitData[i],fileBackedTaskManager);
+                Task task = fromString(splitData[i], fileBackedTaskManager);
                 if (task instanceof EpicTask) {
                     fileBackedTaskManager.creatNewEpicTask((EpicTask) task);
                 } else if (task instanceof SubTask) {
@@ -62,37 +64,59 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return fileBackedTaskManager;
     }
 
-    public static Task fromString(String value,FileBackedTaskManager fileBackedTaskManager) {
+    public static Task fromString(String value, FileBackedTaskManager fileBackedTaskManager) {
         String[] values = value.split(",");
         int id = Integer.parseInt(values[0]);
         String type = values[1];
         String name = values[2];
-        String description = values[4];
+        String description = values[3];
+        Status status = Status.valueOf(values[4]);
         String epicId = null;
+        Duration duration = Duration.ZERO;
         if (values.length == 6) {
             epicId = values[5];
         }
-        if (type.equals("Subtask")) {
-            SubTask subtask = new SubTask(name, description, (EpicTask) fileBackedTaskManager.findTaskById(Integer.parseInt(epicId)));
-            subtask.setIdTask(id);
-            subtask.setStatus(Status.valueOf(values[3]));
-            return subtask;
-        } else if (type.equals("Epic")) {
-            EpicTask epicTask = new EpicTask(name, description);
-            epicTask.setIdTask(id);
-            epicTask.setStatus(Status.valueOf(values[3]));
-            return epicTask;
-        } else {
-            SingleTask singleTask = new SingleTask(name, description);
-            singleTask.setIdTask(id);
-            singleTask.setStatus(Status.valueOf(values[3]));
-            return singleTask;
+        if (!values[5].equals("")) {
+            duration = Duration.ofMinutes(Integer.parseInt(values[5]));
+        }
+        LocalDateTime startTime = null;
+        if (!values[6].equals("0")) {
+            startTime = LocalDateTime.parse(values[6]);
+        }
+        switch (type) {
+            case "SUBTASK": {
+                SubTask subtask = new SubTask(name, description, (EpicTask) fileBackedTaskManager.findTaskById(Integer.parseInt(epicId)));
+                subtask.setIdTask(id);
+                subtask.setStatus(status);
+                subtask.setDuration(duration.toMinutesPart());
+                subtask.setStartTime(startTime.toString());
+                return subtask;
+            }
+            case "EPIC": {
+                EpicTask epicTask = new EpicTask(name, description);
+                epicTask.setIdTask(id);
+                epicTask.setStatus(status);
+                epicTask.setDuration(duration.toMinutesPart());
+                epicTask.setStartTime(startTime.toString());
+                return epicTask;
+            }
+            case "TASK": {
+                SingleTask singleTask = new SingleTask(name, description);
+                singleTask.setIdTask(id);
+                singleTask.setStatus(status);
+                singleTask.setDuration(duration.toMinutesPart());
+                singleTask.setStartTime(String.valueOf(startTime));
+                return singleTask;
+            }
+            default: {
+                throw new RuntimeException("Неправильный формат записи");
+            }
         }
     }
 
     public static String createDataToSave(List<Task> tasks, List<Task> history) {
         StringBuilder dataToSave = new StringBuilder();
-        dataToSave.append("id,type,name,description,status,epicId\n");
+        dataToSave.append("id,type,name,description,status,duration,startTime,epicId\n");
 
         for (Task task : tasks) {
             dataToSave.append(task.toString()).append("\n");
@@ -161,7 +185,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSingleTask(SingleTask singleTask,String name,String description, Status status) {
+    public void updateSingleTask(SingleTask singleTask, String name, String description, Status status) {
         super.updateSingleTask(singleTask,name,description,status);
         save();
     }

@@ -67,6 +67,41 @@ class InMemoryHistoryManagerTest {
         ArrayList<Task> history = taskManager.getHistory();
         assertEquals(0,history.size(),"Неверная работа метода delete с EpicTask");
     }
+
+    @Test
+    void shouldReturnEmptyHistory(){
+        assertTrue(taskManager.getHistory().isEmpty());
+    }
+
+    @Test
+    void shouldNotCreateTwoTasksInHistoryFromOneObject(){
+        SingleTask singleTask = new SingleTask("Single task1", "TestST1");
+        taskManager.createNewSingleTask(singleTask);
+        taskManager.createNewSingleTask(singleTask);
+        taskManager.findTaskById(singleTask.getIdTask());
+        assertEquals(1,taskManager.getHistory().size());
+    }
+
+    @Test
+    void shouldDeleteFirstMiddleAndLastTask(){
+        SingleTask singleTask1 = new SingleTask("Single task1", "TestST1");
+        SingleTask singleTask2 = new SingleTask("Single task2", "TestST2");
+        SingleTask singleTask3 = new SingleTask("Single task3", "TestST3");
+        SingleTask singleTask4 = new SingleTask("Single task4", "TestST4");
+        SingleTask singleTask5 = new SingleTask("Single task5", "TestST5");
+        taskManager.createNewSingleTask(singleTask1);
+        taskManager.createNewSingleTask(singleTask2);
+        taskManager.createNewSingleTask(singleTask3);
+        taskManager.createNewSingleTask(singleTask4);
+        taskManager.createNewSingleTask(singleTask5);
+
+        taskManager.deleteTaskById(singleTask1.getIdTask());
+        assertEquals(4,taskManager.getAllTask().size());
+        taskManager.deleteTaskById(singleTask3.getIdTask());
+        assertEquals(3,taskManager.getAllTask().size());
+        taskManager.deleteTaskById(singleTask5.getIdTask());
+        assertEquals(2,taskManager.getAllTask().size());
+    }
 }
 
 
