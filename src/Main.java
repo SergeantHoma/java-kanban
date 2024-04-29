@@ -1,7 +1,6 @@
 import manager.abstractClass.Task;
 import manager.abstractClass.Managers;
 import manager.impl.enums.Status;
-import manager.impl.enums.TypeOfTask;
 import manager.impl.tasks.EpicTask;
 import manager.impl.tasks.SingleTask;
 import manager.impl.tasks.SubTask;
@@ -14,10 +13,10 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
 
-        /*SingleTask singleTask1 = new SingleTask("Single task1","ST1");
+        SingleTask singleTask1 = new SingleTask("Single task1","ST1");
         singleTask1.setDuration(68);
         singleTask1.setStartTime("22.02.2023 22:22");
-        taskManager.createNewSingleTask(singleTask1);*/
+        taskManager.createNewSingleTask(singleTask1);
 
         SingleTask singleTask2 = new SingleTask("Single task2","ST2");
         singleTask2.setDuration(12);
@@ -44,21 +43,7 @@ public class Main {
         taskManager.updateSubTask(sT2e1,"ds","dsa", Status.IN_PROGRESS);
 
         System.out.println(taskManager.getPrioritizedTasks());
-        System.out.println(eT1.getDuration());
-        System.out.println(eT1.getSubTaskList());
-        /*
-        EpicTask eT2 = new EpicTask("Epic task 2","2 subtask");
-        taskManager.creatNewEpicTask(eT2);
-        SubTask sT1e1 = new SubTask("Sub task 1","1_1 subtask", eT1);
-        taskManager.createNewSubTask(sT1e1);
-        SubTask sT2e1 = new SubTask("Sub task 2","1_2 subtask", eT1);
-        taskManager.createNewSubTask(sT2e1);
-        SubTask sT1e2 = new SubTask("Sub task 3","2_1 subtask", eT2);
-        taskManager.createNewSubTask(sT1e2);
-        taskManager.findTaskById(1);*/
-
-
-        //printAllTasks(taskManager);
+        printAllTasks(taskManager);
     }
 
 
