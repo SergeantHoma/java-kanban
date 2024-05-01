@@ -4,7 +4,9 @@ import manager.abstractClass.Task;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
 
-public class SubTask extends Task {
+import java.time.LocalDateTime;
+
+public class SubTask extends Task implements Comparable<SubTask> {
     private EpicTask epicTask;
 
     public SubTask(String name, String description, EpicTask epicTask) {
@@ -43,11 +45,23 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return this.getIdTask() + "," +
-                this.getType() + "," +
-                this.getName() + ',' +
-                this.getStatus() + "," +
-                this.getDescription() + "," +
-                this.getEpicTask().getIdTask();
+        String value = getIdTask() + "," + getType() +  "," + getName() + ","
+                + getDescription() + "," + getStatus() + ",";
+        if (duration.isEmpty()) {
+            value += ",";
+        } else {
+            value += getDuration().toMinutesPart() + ",";
+        }
+        if (startTime.isEmpty()) {
+            value = value + "0";
+            return value;
+        }
+        LocalDateTime localDateTime = startTime.get();
+        return value + localDateTime.format(DATE_TIME_FORMATTER) + "," + getEpicTask().getIdTask();
+    }
+
+    @Override
+    public int compareTo(SubTask o) {
+        return startTime.toString().compareTo(o.getStartTime().toString());
     }
 }

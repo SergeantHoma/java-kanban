@@ -3,7 +3,11 @@ package manager.abstractClass;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class Task {
     protected String name;
@@ -11,6 +15,11 @@ public abstract class Task {
     protected int idTask;
 
     protected Status status = Status.NEW;
+
+    protected Optional<Duration> duration = Optional.empty();
+    protected Optional<LocalDateTime> startTime = Optional.empty();
+    protected static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
 
     public Task(String name,String description) {
         setName(name);
@@ -45,6 +54,38 @@ public abstract class Task {
 
     public String getName() {
         return name;
+    }
+
+    public Duration getDuration() {
+        return duration.orElse(null);
+    }
+
+    public void setDuration(Integer minutes) {
+        if (minutes == null) {
+            this.duration = Optional.empty();
+            return;
+        }
+        this.duration = Optional.of(Duration.ofMinutes(minutes));
+    }
+
+
+    public void setStartTime(String text) {
+        if (text == null) {
+            this.startTime = Optional.empty();
+            return;
+        } else if (text.equals("null")) {
+            this.startTime = Optional.empty();
+            return;
+        }
+        this.startTime = Optional.of(LocalDateTime.parse(text, DATE_TIME_FORMATTER));
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime.orElse(null);
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.map(localDateTime -> localDateTime.plus(duration.get())).orElse(null);
     }
 
     @Override

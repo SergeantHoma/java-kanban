@@ -4,10 +4,13 @@ import manager.abstractClass.Task;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
 
-public class SingleTask extends Task {
+import java.time.LocalDateTime;
+import java.util.Optional;
 
+public class SingleTask extends Task {
     public SingleTask(String name, String description) {
         super(name, description);
+        duration = Optional.empty();
     }
 
     private SingleTask(String name, String description,Status status) {
@@ -28,12 +31,20 @@ public class SingleTask extends Task {
                 );
     }
 
-        @Override
+    @Override
     public String toString() {
-        return  this.getIdTask() + "," +
-                this.getType() + "," +
-                this.getName() + ',' +
-                this.getStatus() + "," +
-                this.getDescription();
+        String value = getIdTask() + "," + getType() +  "," + getName() + ","
+                + getDescription() + "," + getStatus() + ",";
+        if (duration.isEmpty()) {
+            value += ",";
+        } else {
+            value += getDuration().toMinutesPart() + ",";
+        }
+        if (startTime.isEmpty()) {
+            value += "0";
+            return value;
+        }
+        LocalDateTime localDateTime = startTime.get();
+        return value + localDateTime.format(DATE_TIME_FORMATTER);
     }
 }

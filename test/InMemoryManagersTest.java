@@ -1,3 +1,4 @@
+import exceptions.ManagerSaveException;
 import manager.abstractClass.Managers;
 import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;
@@ -6,6 +7,7 @@ import manager.impl.tasks.SingleTask;
 import manager.impl.tasks.SubTask;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,5 +126,31 @@ class InMemoryManagersTest {
         assertEquals(emptyArrayList,taskManager.getAllTaskByType(TypeOfTask.EPIC));
     }
 
+    @Test
+    void shouldReturnDurationForEpicTask(){
+        EpicTask epicTask = new EpicTask ("TestEpic","TestDescription");
+        taskManager.creatNewEpicTask(epicTask);
+        SubTask sT1e1 = new SubTask("Sub task 1","1_1 subtask", epicTask);
+        sT1e1.setDuration(6);
+        sT1e1.setStartTime("22.02.2023 22:01");
+        taskManager.createNewSubTask(sT1e1);
+        SubTask sT2e1 = new SubTask("Sub task 2","1_2 subtask", epicTask);
+        sT2e1.setDuration(7);
+        sT2e1.setStartTime("23.02.2023 22:01");
+        taskManager.createNewSubTask(sT2e1);
+        assertEquals(Duration.ofMinutes(13),taskManager.findTaskById(epicTask.getIdTask()).getDuration());
+    }
 
+    @Test
+    void shouldNotMakeTasksWithIntersectedTime(){
+        SingleTask singleTask = new SingleTask ("TestSingle","TestDescription");
+        singleTask.setDuration(6);
+        singleTask.setStartTime("22.02.2023 22:01");
+        taskManager.createNewSingleTask(singleTask);
+        SingleTask singleTask1 = new SingleTask ("TestSingle","TestDescription");
+        singleTask1.setDuration(6);
+        singleTask1.setStartTime("22.02.2023 22:06");
+
+        assertEquals(1,taskManager.getAllTask().size());
+    }
 }
