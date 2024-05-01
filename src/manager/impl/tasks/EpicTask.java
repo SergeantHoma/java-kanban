@@ -33,7 +33,7 @@ public class EpicTask extends Task {
     @Override
     public LocalDateTime getEndTime() {
         Optional<SubTask> subTaskWithLastStartTime = subTaskList.stream()
-                .min(SubTask::compareTo);
+                .max(SubTask::compareTo);
         this.endTime = subTaskWithLastStartTime.get().getEndTime();
         if (endTime == null) {
             return null;
@@ -51,6 +51,15 @@ public class EpicTask extends Task {
         setDuration(result);
         return duration.orElse(null);
     }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        Optional<SubTask> subTaskWithLastStartTime = subTaskList.stream()
+                .min(SubTask::compareTo);
+        this.startTime = Optional.ofNullable(subTaskWithLastStartTime.get().getStartTime());
+        return startTime.orElse(null);
+    }
+
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;

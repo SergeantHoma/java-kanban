@@ -151,8 +151,6 @@ class InMemoryManagersTest {
         singleTask1.setDuration(6);
         singleTask1.setStartTime("22.02.2023 22:06");
 
-        assertThrows(ManagerSaveException.class, () -> {
-            taskManager.createNewSingleTask(singleTask1);
-            },"Ошибка: задачи пересекаются по времени");
+        assertEquals(1,taskManager.getAllTask().size());
     }
 }

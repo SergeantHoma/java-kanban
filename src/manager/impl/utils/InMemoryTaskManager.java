@@ -1,6 +1,5 @@
 package manager.impl.utils;
 
-import exceptions.ManagerSaveException;
 import manager.abstractClass.Task;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
@@ -32,10 +31,6 @@ public class InMemoryTaskManager implements TaskManager {
         numberOfIdTask++;
     }
 
-    protected void setIDTask(Task task, int id) {
-        task.setIdTask(id);
-    }
-
     @Override
     public ArrayList<Task> getHistory() {
         return inMemoryHistoryManager.getHistory();
@@ -53,12 +48,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createNewSingleTask(SingleTask singleTask) {
+        if (isStartTimeExist(singleTask)) {
+            if (checkIfIntersectedTaskExist(singleTask)) {
+                prioritizedTasks.add(singleTask);
+            } else {
+                return;
+            }
+        }
         incrementId();
         singleTask.setIdTask(numberOfIdTask);
-        if (isStartTimeExist(singleTask)) {
-            checkIfIntersectedTaskExist(singleTask);
-            prioritizedTasks.add(singleTask);
-        }
         saveNewTask(singleTask);
     }
 
@@ -71,13 +69,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createNewSubTask(SubTask subTask) {
+        if (isStartTimeExist(subTask)) {
+            if (checkIfIntersectedTaskExist(subTask)) {
+                prioritizedTasks.add(subTask);
+            } else {
+                return;
+            }
+        }
         incrementId();
         subTask.setIdTask(numberOfIdTask);
         saveNewTask(subTask);
-        if (isStartTimeExist(subTask)) {
-            checkIfIntersectedTaskExist(subTask);
-            prioritizedTasks.add(subTask);
-        }
         updateEpicDurationAndTime(subTask.getEpicTask());
         isEpicDone(subTask.getEpicTask());
     }
@@ -258,16 +259,18 @@ public class InMemoryTaskManager implements TaskManager {
                 || firstTask.getEndTime().isEqual(secondTask.getEndTime()));
     }
 
-    private void checkIfIntersectedTaskExist(Task currentTask) {
+    private boolean checkIfIntersectedTaskExist(Task currentTask) {
         if (currentTask.getStartTime() == null) {
-            return;
+            return false;
         }
         Optional<Task> intersectedTask = prioritizedTasks.stream()
                 .filter(task -> isTasksIntersected(currentTask, task))
                 .findFirst();
         if (intersectedTask.isPresent()) {
-            throw new ManagerSaveException("Ошибка: задачи пересекаются по времени");
+            System.out.println("Ошибка: задачи пересекаются по времени");
+            return false;
         }
+        return true;
     }
 
     private void checkForUpdate(Task task) {

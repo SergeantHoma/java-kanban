@@ -22,7 +22,6 @@ public class Main {
         singleTask2.setDuration(12);
         singleTask2.setStartTime("22.02.2023 22:22");
         taskManager.createNewSingleTask(singleTask2);
-
         System.out.println(singleTask2);
 
         EpicTask eT1 = new EpicTask("Epic task 1","1 subtask");
@@ -34,8 +33,11 @@ public class Main {
         taskManager.createNewSubTask(sT1e1);
         SubTask sT2e1 = new SubTask("Sub task 2","1_2 subtask", eT1);
         sT2e1.setDuration(7);
-        sT2e1.setStartTime("23.02.2023 22:01");
+        sT2e1.setStartTime("21.02.2023 22:01");
         taskManager.createNewSubTask(sT2e1);
+
+        System.out.println("ёпик начало " + eT1.getStartTime());
+        System.out.println("ёпик конец " + eT1.getEndTime());
 
         System.out.println(taskManager.getPrioritizedTasks());
 
