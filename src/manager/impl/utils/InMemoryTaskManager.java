@@ -322,7 +322,7 @@ public class InMemoryTaskManager implements TaskManager {
                         .contains(subtasksStart.getIdTask()))
                 .min(Comparator.comparing(Task::getStartTime))
                 .stream().findFirst();
-        firstSubtask.ifPresent(value -> epic.setStartTime(value.getStartTime().toString()));
+        firstSubtask.ifPresent(value -> epic.setStartTime(value.getStartTime()));
         //Время конца
         Optional<Task> lastSubtask = getAllTaskByType(TypeOfTask.SUBTASK).stream()
                 .filter(subtasksEnd -> epic.getSubTaskList()
