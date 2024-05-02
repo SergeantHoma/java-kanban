@@ -4,14 +4,16 @@ import manager.abstractClass.Task;
 import manager.impl.enums.Status;
 import manager.impl.enums.TypeOfTask;
 
-import java.time.LocalDateTime;
-
 public class SubTask extends Task implements Comparable<SubTask> {
-    private EpicTask epicTask;
+    protected TypeOfTask type = TypeOfTask.SUBTASK;
+
+    private transient EpicTask epicTask;
+    private int idEpicTask;
 
     public SubTask(String name, String description, EpicTask epicTask) {
         super(name, description);
         setEpicTask(epicTask);
+        idEpicTask = epicTask.getIdTask();
         epicTask.addSubTask(this);
     }
 
@@ -19,6 +21,7 @@ public class SubTask extends Task implements Comparable<SubTask> {
         super(name, description);
         setStatus(status);
         setEpicTask(epicTask);
+        idEpicTask = epicTask.getIdTask();
     }
 
     public SubTask update(String name,String description,EpicTask epicTask, Status status) {
@@ -36,32 +39,36 @@ public class SubTask extends Task implements Comparable<SubTask> {
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.SUBTASK;
+        return type;
     }
 
     public void setEpicTask(EpicTask epicTask) {
         this.epicTask = epicTask;
     }
 
+    public int getIdForSerialization() {
+        return idEpicTask;
+    }
+
     @Override
     public String toString() {
         String value = getIdTask() + "," + getType() +  "," + getName() + ","
                 + getDescription() + "," + getStatus() + ",";
-        if (duration.isEmpty()) {
+        if (duration == null) {
             value += ",";
         } else {
-            value += getDuration().toMinutesPart() + ",";
+            value += getDuration() + ",";
         }
-        if (startTime.isEmpty()) {
-            value = value + "0";
-            return value;
+        if (startTime == null) {
+            value += "0";
+            return value + "," + getEpicTask().getIdTask();
+        } else {
+            return value + startTime.format(DATE_TIME_FORMATTER) + "," + getEpicTask().getIdTask();
         }
-        LocalDateTime localDateTime = startTime.get();
-        return value + localDateTime.format(DATE_TIME_FORMATTER) + "," + getEpicTask().getIdTask();
     }
 
     @Override
     public int compareTo(SubTask o) {
-        return startTime.toString().compareTo(o.getStartTime().toString());
+        return startTime.toString().compareTo(o.getStartTime());
     }
 }

@@ -1,16 +1,19 @@
 package manager.impl.tasks;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
-
 import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Optional;
+
 public class EpicTask extends Task {
+    protected TypeOfTask type = TypeOfTask.EPIC;
     private ArrayList<SubTask> subTaskList;
     private LocalDateTime endTime;
+
+    protected static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public EpicTask(String name,String description) {
         super(name,description);
@@ -31,33 +34,38 @@ public class EpicTask extends Task {
     }
 
     @Override
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         Optional<SubTask> subTaskWithLastStartTime = subTaskList.stream()
                 .max(SubTask::compareTo);
-        this.endTime = subTaskWithLastStartTime.get().getEndTime();
-        if (endTime == null) {
-            return null;
+        if (subTaskWithLastStartTime.isEmpty()) {
+            return "null";
         }
-        return endTime;
+        this.endTime = LocalDateTime.parse(subTaskWithLastStartTime.get().getEndTime(), DATE_TIME_FORMATTER);
+        return endTime.toString();
     }
 
     @Override
-    public Duration getDuration() {
+    public Integer getDuration() {
         int result = 0;
         for (SubTask s: subTaskList
              ) {
-            result += s.getDuration().toMinutesPart();
+            if (s.getDuration() != null) {
+                result += s.getDuration();
+            }
         }
         setDuration(result);
-        return duration.orElse(null);
+        return duration.toMinutesPart();
     }
 
     @Override
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         Optional<SubTask> subTaskWithLastStartTime = subTaskList.stream()
                 .min(SubTask::compareTo);
-        this.startTime = Optional.ofNullable(subTaskWithLastStartTime.get().getStartTime());
-        return startTime.orElse(null);
+        if (subTaskWithLastStartTime.isEmpty()) {
+            return "null";
+        }
+        this.startTime = LocalDateTime.parse(subTaskWithLastStartTime.get().getStartTime(), DATE_TIME_FORMATTER);
+        return startTime.toString();
     }
 
 
@@ -66,7 +74,7 @@ public class EpicTask extends Task {
     }
 
     public ArrayList<SubTask> getSubTaskList() {
-        return new ArrayList<SubTask>(subTaskList);
+        return new ArrayList<>(subTaskList);
     }
 
     public void addSubTask(SubTask subTask) {
@@ -79,15 +87,23 @@ public class EpicTask extends Task {
 
     @Override
     public TypeOfTask getType() {
-        return TypeOfTask.EPIC;
+        return type;
     }
 
     @Override
     public String toString() {
-        return  this.getIdTask() + "," +
-                this.getType() + "," +
-                this.getName() + ',' +
-                this.getStatus() + "," +
-                this.getDescription();
+        String value = getIdTask() + "," + getType() +  "," + getName() + ","
+                + getDescription() + "," + getStatus() + ",";
+        if (duration == null) {
+            value += null + ",";
+        } else {
+            value += getDuration() + ",";
+        }
+        if (startTime == null) {
+            value += "0";
+            return value;
+        } else {
+            return value + startTime.format(DATE_TIME_FORMATTER);
+        }
     }
 }

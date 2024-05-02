@@ -84,7 +84,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             startTime = LocalDateTime.parse(values[6]);
         }
         switch (type) {
-            case "SUBTASK": {
+            case "SUBTASK" -> {
                 SubTask subtask = new SubTask(name, description, (EpicTask) fileBackedTaskManager.findTaskById(Integer.parseInt(epicId)));
                 subtask.setIdTask(id);
                 subtask.setStatus(status);
@@ -92,7 +92,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 subtask.setStartTime(startTime.toString());
                 return subtask;
             }
-            case "EPIC": {
+            case "EPIC" -> {
                 EpicTask epicTask = new EpicTask(name, description);
                 epicTask.setIdTask(id);
                 epicTask.setStatus(status);
@@ -100,7 +100,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epicTask.setStartTime(startTime.toString());
                 return epicTask;
             }
-            case "TASK": {
+            case "TASK" -> {
                 SingleTask singleTask = new SingleTask(name, description);
                 singleTask.setIdTask(id);
                 singleTask.setStatus(status);
@@ -108,7 +108,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 singleTask.setStartTime(String.valueOf(startTime));
                 return singleTask;
             }
-            default: {
+            default -> {
                 throw new RuntimeException("Неправильный формат записи");
             }
         }

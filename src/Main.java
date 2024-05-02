@@ -1,17 +1,36 @@
-import manager.abstractClass.Task;
 import manager.abstractClass.Managers;
-import manager.impl.enums.Status;
+import manager.abstractClass.Task;
 import manager.impl.tasks.EpicTask;
 import manager.impl.tasks.SingleTask;
 import manager.impl.tasks.SubTask;
 import manager.interfaces.TaskManager;
 
+import java.io.IOException;
 
 import static manager.impl.enums.TypeOfTask.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.getDefault();
+        SingleTask singleTask1 = new SingleTask("Single task1","ST1");
+        singleTask1.setDuration(68);
+        singleTask1.setStartTime("22.02.2023 22:22");
+        taskManager.createNewSingleTask(singleTask1);
+        SingleTask singleTask2 = new SingleTask("Single task1","ST1");
+        singleTask2.setDuration(68);
+        singleTask2.setStartTime("23.02.2023 22:22");
+        taskManager.createNewSingleTask(singleTask2);
+
+        EpicTask eT1 = new EpicTask("Epic task 1","1 subtask");
+        taskManager.creatNewEpicTask(eT1);
+        SubTask sT1e1 = new SubTask("Sub task 1","1_1 subtask", eT1);
+        sT1e1.setDuration(6);
+        sT1e1.setStartTime("22.02.2023 22:01");
+
+
+        manager.server.HttpTaskServer httpTaskServer = new manager.server.HttpTaskServer(taskManager);
+        httpTaskServer.start();
+        /*
 
         SingleTask singleTask1 = new SingleTask("Single task1","ST1");
         singleTask1.setDuration(68);
@@ -24,8 +43,7 @@ public class Main {
         taskManager.createNewSingleTask(singleTask2);
         System.out.println(singleTask2);
 
-        EpicTask eT1 = new EpicTask("Epic task 1","1 subtask");
-        taskManager.creatNewEpicTask(eT1);
+
 
         SubTask sT1e1 = new SubTask("Sub task 1","1_1 subtask", eT1);
         sT1e1.setDuration(6);
@@ -45,7 +63,7 @@ public class Main {
         taskManager.updateSubTask(sT2e1,"ds","dsa", Status.IN_PROGRESS);
 
         System.out.println(taskManager.getPrioritizedTasks());
-        printAllTasks(taskManager);
+        printAllTasks(taskManager);*/
     }
 
 
