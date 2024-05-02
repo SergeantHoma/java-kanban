@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.Optional;
 
 public abstract class Task {
     protected String name;
@@ -16,8 +15,8 @@ public abstract class Task {
 
     protected Status status = Status.NEW;
 
-    protected Optional<Duration> duration = Optional.empty();
-    protected Optional<LocalDateTime> startTime = Optional.empty();
+    protected Duration duration = null;
+    protected LocalDateTime startTime = null;
     protected static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
@@ -56,36 +55,48 @@ public abstract class Task {
         return name;
     }
 
-    public Duration getDuration() {
-        return duration.orElse(null);
+    public Integer getDuration() {
+        if (duration == null) {
+            return 0;
+        } else {
+            return duration.toMinutesPart();
+        }
     }
 
     public void setDuration(Integer minutes) {
         if (minutes == null) {
-            this.duration = Optional.empty();
+            this.duration = null;
             return;
         }
-        this.duration = Optional.of(Duration.ofMinutes(minutes));
+        this.duration = Duration.ofMinutes(minutes);
     }
 
 
     public void setStartTime(String text) {
         if (text == null) {
-            this.startTime = Optional.empty();
+            this.startTime = null;
             return;
-        } else if (text.equals("null")) {
-            this.startTime = Optional.empty();
+        }  else if (text.equals("null")) {
+            this.startTime = null;
             return;
         }
-        this.startTime = Optional.of(LocalDateTime.parse(text, DATE_TIME_FORMATTER));
+        this.startTime = LocalDateTime.parse(text, DATE_TIME_FORMATTER);
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime.orElse(null);
+    public String getStartTime() {
+        if (startTime == null) {
+            return "null";
+        } else if (startTime.toString().equals("null")) {
+            return "null";
+        }
+        return startTime.format(DATE_TIME_FORMATTER);
     }
 
-    public LocalDateTime getEndTime() {
-        return startTime.map(localDateTime -> localDateTime.plus(duration.get())).orElse(null);
+    public String getEndTime() {
+        if (startTime == null) {
+            return "null";
+        }
+        return startTime.plusMinutes(duration.toMinutesPart()).format(DATE_TIME_FORMATTER);
     }
 
     @Override

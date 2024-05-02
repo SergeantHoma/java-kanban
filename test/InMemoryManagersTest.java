@@ -1,4 +1,3 @@
-import exceptions.ManagerSaveException;
 import manager.abstractClass.Managers;
 import manager.abstractClass.Task;
 import manager.impl.enums.TypeOfTask;
@@ -7,11 +6,11 @@ import manager.impl.tasks.SingleTask;
 import manager.impl.tasks.SubTask;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class InMemoryManagersTest {
     manager.interfaces.TaskManager taskManager = Managers.getDefault();
@@ -138,7 +137,7 @@ class InMemoryManagersTest {
         sT2e1.setDuration(7);
         sT2e1.setStartTime("23.02.2023 22:01");
         taskManager.createNewSubTask(sT2e1);
-        assertEquals(Duration.ofMinutes(13),taskManager.findTaskById(epicTask.getIdTask()).getDuration());
+        assertEquals(13,taskManager.findTaskById(epicTask.getIdTask()).getDuration());
     }
 
     @Test
