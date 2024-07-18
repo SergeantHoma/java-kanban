@@ -9,6 +9,7 @@ import manager.impl.tasks.SubTask;
 import manager.interfaces.HistoryManager;
 import manager.interfaces.TaskManager;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -159,7 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllTaskByType(TypeOfTask typeOfTask) {
+    public List<Task> getAllTaskByType(TypeOfTask typeOfTask) {
         ArrayList<Task> returnTasksByType = new ArrayList<>();
         if (!tasks.isEmpty()) {
             for (Task task : tasks.values()) {
@@ -251,16 +252,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isTasksIntersected(Task firstTask, Task secondTask) {
-        return (firstTask.getEndTime().isAfter(secondTask.getStartTime())
-                && firstTask.getEndTime().isBefore(secondTask.getEndTime())
-                || secondTask.getEndTime().isAfter(firstTask.getStartTime())
-                && secondTask.getEndTime().isBefore(firstTask.getEndTime())
-                || firstTask.getStartTime().isEqual(secondTask.getStartTime())
-                || firstTask.getEndTime().isEqual(secondTask.getEndTime()));
+        return (LocalDateTime.parse(firstTask.getEndTime(), DATE_TIME_FORMATTER))
+                .isAfter(LocalDateTime.parse(secondTask.getStartTime(), DATE_TIME_FORMATTER))
+                && (LocalDateTime.parse(firstTask.getEndTime(), DATE_TIME_FORMATTER))
+                .isBefore(LocalDateTime.parse(secondTask.getEndTime(), DATE_TIME_FORMATTER))
+                || (LocalDateTime.parse(secondTask.getEndTime(), DATE_TIME_FORMATTER))
+                        .isAfter(LocalDateTime.parse(firstTask.getStartTime(), DATE_TIME_FORMATTER))
+                && (LocalDateTime.parse(secondTask.getEndTime(), DATE_TIME_FORMATTER))
+                        .isBefore((LocalDateTime.parse(firstTask.getEndTime(), DATE_TIME_FORMATTER)))
+                || firstTask.getStartTime().equals(secondTask.getStartTime())
+                || firstTask.getEndTime().equals(secondTask.getEndTime());
     }
 
     private boolean checkIfIntersectedTaskExist(Task currentTask) {
-        if (currentTask.getStartTime() == null) {
+        if (currentTask.getStartTime().equals("null")) {
             return false;
         }
         Optional<Task> intersectedTask = prioritizedTasks.stream()
@@ -287,12 +292,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (oldTask.getDuration() == null) {
             newTask.setDuration(null);
         } else {
-            newTask.setDuration(oldTask.getDuration().toMinutesPart());
+            newTask.setDuration(oldTask.getDuration());
         }
         if (oldTask.getStartTime() == null) {
             newTask.setStartTime(null);
         } else {
-            newTask.setStartTime(oldTask.getStartTime().format(DATE_TIME_FORMATTER));
+            newTask.setStartTime(oldTask.getStartTime());
         }
     }
 
@@ -300,7 +305,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task == null) {
             return false;
         }
-        return task.getStartTime() != null;
+        return !task.getStartTime().equals("null");
     }
 
     private void updateEpicDurationAndTime(EpicTask epic) {
@@ -317,19 +322,19 @@ public class InMemoryTaskManager implements TaskManager {
                         .contains(subtasksStart.getIdTask()))
                 .min(Comparator.comparing(Task::getStartTime))
                 .stream().findFirst();
-        firstSubtask.ifPresent(value -> epic.setStartTime(value.getStartTime().toString()));
+        firstSubtask.ifPresent(value -> epic.setStartTime(value.getStartTime()));
         //Время конца
         Optional<Task> lastSubtask = getAllTaskByType(TypeOfTask.SUBTASK).stream()
                 .filter(subtasksEnd -> epic.getSubTaskList()
                         .contains(subtasksEnd.getIdTask()))
                 .max(Comparator.comparing(Task::getEndTime))
                 .stream().findFirst();
-        lastSubtask.ifPresent(value -> epic.setEndTime(value.getEndTime()));
+        lastSubtask.ifPresent(value -> epic.setEndTime(LocalDateTime.parse(value.getEndTime(),DATE_TIME_FORMATTER)));
 
         long totalDuration = 0;
         for (SubTask s : epic.getSubTaskList())
             if (s.getDuration() != null)
-            totalDuration = s.getDuration().toMinutes();
+            totalDuration = s.getDuration();
         epic.setDuration((int) totalDuration);
     }
 }
